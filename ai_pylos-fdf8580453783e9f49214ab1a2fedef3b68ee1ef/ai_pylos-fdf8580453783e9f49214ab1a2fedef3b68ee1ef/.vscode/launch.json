@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "BattleMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.battle.BattleMain",
+            "projectName": "pylos-core"
+        },
+        {
+            "type": "java",
+            "name": "RoundRobinMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.battle.RoundRobinMain",
+            "projectName": "pylos-core"
+        },
+        {
+            "type": "java",
+            "name": "PylosPlayerMiniMax",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.player.codes.PylosPlayerMiniMax",
+            "projectName": "pylos-core"
+        },
+        {
+            "type": "java",
+            "name": "PylosGuiMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.gui.PylosGuiMain",
+            "projectName": "pylos-gui"
+        },
+        {
+            "type": "java",
+            "name": "TestMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.testbattle.TestMain",
+            "projectName": "pylos-gui"
+        },
+        {
+            "type": "java",
+            "name": "PylosMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.main.PylosMain",
+            "projectName": "pylos-student"
+        }
+    ]
+}
