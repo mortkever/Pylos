@@ -8,49 +8,56 @@
             "type": "java",
             "name": "Current File",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "${file}",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "BattleMain",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.battle.BattleMain",
-            "projectName": "pylos-core"
+            "projectName": "pylos-core",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "RoundRobinMain",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.battle.RoundRobinMain",
-            "projectName": "pylos-core"
+            "projectName": "pylos-core",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "PylosPlayerMiniMax",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.player.codes.PylosPlayerMiniMax",
-            "projectName": "pylos-core"
+            "projectName": "pylos-core",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "PylosGuiMain",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.gui.PylosGuiMain",
-            "projectName": "pylos-gui"
+            "projectName": "pylos-gui",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "TestMain",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.testbattle.TestMain",
-            "projectName": "pylos-gui"
+            "projectName": "pylos-gui",
+            "vmArgs": "-enableassertions"
         },
         {
             "type": "java",
             "name": "PylosMain",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.main.PylosMain",
-            "projectName": "pylos-student"
+            "projectName": "pylos-student",
+            "vmArgs": "-enableassertions"
         }
     ]
 }

@@ -10,7 +10,7 @@ import be.kuleuven.pylos.player.PylosPlayer;
 /**
  * Created by Jan on 20/02/2015.
  */
-public class StudentPlayer extends PylosPlayer {
+public class StudentPlayerIndra extends PylosPlayer {
 
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {

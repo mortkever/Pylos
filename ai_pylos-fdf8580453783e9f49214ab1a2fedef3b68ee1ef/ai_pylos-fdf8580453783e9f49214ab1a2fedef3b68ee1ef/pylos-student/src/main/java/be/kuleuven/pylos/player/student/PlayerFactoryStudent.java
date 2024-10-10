@@ -20,7 +20,14 @@ public class PlayerFactoryStudent extends PylosPlayerFactory {
 		add(new PylosPlayerType("Student") {
 			@Override
 			public PylosPlayer create() {
-				return new StudentPlayer();
+				return new StudentPlayerVictor();
+			}
+		});
+
+		add(new PylosPlayerType("Student") {
+			@Override
+			public PylosPlayer create() {
+				return new StudentPlayerIndra();
 			}
 		});
 
