@@ -57,6 +57,9 @@ public class StudentPlayerIndra extends PylosPlayer {
 		PylosLocation FROM;
 
 		// ...
+		//reversesimulate
+    	//simulate
+    	//execute
 
 		public Action(PylosSphere sphere, PylosLocation to, PylosLocation from, ActionType type) {
 			this.SPHERE = sphere;
