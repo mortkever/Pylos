@@ -16,6 +16,7 @@ public class Action {
   PylosSphere SPHERE;
   PylosLocation TO;
   PylosLocation FROM;
+
   PylosGameState prevState;
 
   // ...
@@ -38,6 +39,7 @@ public class Action {
   }
 
   public void simulate(PylosGameSimulator sim) {
+    prevState = sim.getState();
     if (TYPE == ActionType.MOVE) {
       sim.moveSphere(SPHERE, TO);
     } else if (TYPE == ActionType.REMOVE) {
@@ -49,23 +51,23 @@ public class Action {
 
   public void undoSimulate(PylosGameSimulator sim) {
     if (TYPE == ActionType.MOVE) {
-      if (prevState == PylosGameState.MOVE) {
-        sim.undoMoveSphere(this.SPHERE, this.FROM, this.prevState, this.SPHERE.PLAYER_COLOR.other());
+      if (this.FROM != null && prevState == PylosGameState.MOVE) {
+        sim.undoMoveSphere(this.SPHERE, this.FROM, this.prevState, this.SPHERE.PLAYER_COLOR );
       } else if (this.FROM == null) {
-        sim.undoAddSphere(SPHERE, this.prevState, this.SPHERE.PLAYER_COLOR.other());
+        sim.undoAddSphere(SPHERE, this.prevState, this.SPHERE.PLAYER_COLOR );
       } else {
         assert false;
       }
     } else if (TYPE == ActionType.REMOVE) {
       if (prevState == PylosGameState.REMOVE_FIRST) {
-        sim.undoRemoveFirstSphere(SPHERE, FROM, prevState, this.SPHERE.PLAYER_COLOR.other());
+        sim.undoRemoveFirstSphere(SPHERE, FROM, prevState, this.SPHERE.PLAYER_COLOR );
       } else if (prevState == PylosGameState.REMOVE_SECOND) {
-        sim.undoRemoveSecondSphere(SPHERE, FROM, prevState, this.SPHERE.PLAYER_COLOR.other());
+        sim.undoRemoveSecondSphere(SPHERE, FROM, prevState, this.SPHERE.PLAYER_COLOR );
       } else {
         assert false;
       }
     } else if (TYPE == ActionType.PASS) {
-      sim.undoPass(prevState, this.SPHERE.PLAYER_COLOR.other());
+      sim.undoPass(prevState, this.SPHERE.PLAYER_COLOR );
     } else {
       assert false;
     }

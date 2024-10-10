@@ -13,6 +13,8 @@ import be.kuleuven.pylos.game.PylosPlayerColor;
 import be.kuleuven.pylos.game.PylosSphere;
 import be.kuleuven.pylos.player.PylosPlayer;
 
+import be.kuleuven.pylos.player.Action.Action;
+import be.kuleuven.pylos.player.Action.ActionType;
 /**
  * Created by Jan on 20/02/2015.
  */
@@ -91,12 +93,16 @@ public class StudentPlayerIndra extends PylosPlayer {
 		PylosSphere sphere = board.getReserve(this);
 		PylosLocation[] locations = board.getLocations();
 		int size = locations.length;
+		assert(size > 0);
 		
 		for (int i = 0; i < size; i++) {
 			assert(locations[i] != null);
-			if (locations[i].isUsable()) {
-				possibleActions.add(new Action(sphere, locations[i], null, ActionType.MOVE));
+			if(locations[i] != null){   //tijdelijk deze if
+				if (locations[i].isUsable()) {
+					possibleActions.add(new Action(sphere, locations[i], null, ActionType.MOVE));
+				}
 			}
+			
 		}
 
 		Action bestAction = null;
@@ -123,71 +129,78 @@ public class StudentPlayerIndra extends PylosPlayer {
 		return score;
 	}
 
-	public static class Action {
+	//public static class Action {
 		// later: lijst van alle mogelijke toekomstige moves (eigen moves en moves
 		// tegenstander, dus ook kleur meegeven)
 		// en dan daaruit later beste kan kiezen
 		// of state (er was nog 1)
 
-		ActionType TYPE;
-		PylosSphere SPHERE;
-		PylosLocation TO;
-		PylosLocation FROM;
+		// ActionType TYPE;
+		// PylosSphere SPHERE;
+		// PylosLocation TO;
+		// PylosLocation FROM;
 
-		PylosGameState prevState;
-		PylosPlayerColor prevColor;
+		// PylosGameState prevState;
+		// PylosPlayerColor prevColor;
 
 		// ...
 		// reversesimulate
 		// simulate
 		// execute
 
-		public Action(PylosSphere sphere, PylosLocation to, PylosLocation from, ActionType type) {
-			this.SPHERE = sphere;
-			this.TO = to;
-			this.FROM = from;
-			this.TYPE = type;
-		}
+	// 	public Action(PylosSphere sphere, PylosLocation to, PylosLocation from, ActionType type) {
+	// 		this.SPHERE = sphere;
+	// 		this.TO = to;
+	// 		this.FROM = from;
+	// 		this.TYPE = type;
+	// 	}
 
-		public void execute(PylosGameIF game) {
-			if (TYPE == ActionType.MOVE) {
-				game.moveSphere(SPHERE, TO);
-			} else if (TYPE == ActionType.REMOVE) {
-				game.removeSphere(SPHERE);
-			} else if (TYPE == ActionType.PASS) {
-				game.pass();
-			}
-		}
+	// 	public void execute(PylosGameIF game) {
+	// 		if (TYPE == ActionType.MOVE) {
+	// 			game.moveSphere(SPHERE, TO);
+	// 		} else if (TYPE == ActionType.REMOVE) {
+	// 			game.removeSphere(SPHERE);
+	// 		} else if (TYPE == ActionType.PASS) {
+	// 			game.pass();
+	// 		}
+	// 	}
 
-		// new
-		public void simulate(PylosGameSimulator sim) {
-			prevState = sim.getState(); // niet zeker of die twee juist
-			prevColor = sim.getColor();
-			if (TYPE == ActionType.MOVE) {
-				sim.moveSphere(SPHERE, TO);
-			} else if (TYPE == ActionType.REMOVE) {
-				sim.removeSphere(SPHERE);
-			} else if (TYPE == ActionType.PASS) {
-				sim.pass();
-			}
-		}
+	// 	// new
+	// 	public void simulate(PylosGameSimulator sim) {
+	// 		prevState = sim.getState(); // niet zeker of die twee juist
+	// 		prevColor = sim.getColor();
+	// 		if (TYPE == ActionType.MOVE) {
+	// 			sim.moveSphere(SPHERE, TO);
+				
+	// 		} else if (TYPE == ActionType.REMOVE) {
+	// 			sim.removeSphere(SPHERE);
+	// 		} else if (TYPE == ActionType.PASS) {
+	// 			sim.pass();
+	// 		}
+	// 	}
 
-		// nog undo
-		public void undoSimulate(PylosGameSimulator sim) {
-			if (TYPE == ActionType.MOVE) {
-				sim.undoMoveSphere(SPHERE, FROM, prevState, prevColor);
-			} else if (TYPE == ActionType.REMOVE) {
-				sim.undoRemoveFirstSphere(SPHERE, FROM, prevState, prevColor);
-			} else if (TYPE == ActionType.PASS) {
-				sim.undoPass(prevState, prevColor);
-			}
-		}
+	// 	// nog undo
+	// 	public void undoSimulate(PylosGameSimulator sim) {
+	// 		if (TYPE == ActionType.MOVE) {
+	// 			if(FROM == null){
+	// 				sim.undoAddSphere(SPHERE, prevState, prevColor);
+	// 			}	
+	// 			else{
+	// 				sim.undoMoveSphere(SPHERE, FROM, prevState, prevColor);
+	// 			}
+				
+	// 		} else if (TYPE == ActionType.REMOVE) {
+	// 			sim.undoRemoveFirstSphere(SPHERE, FROM, prevState, prevColor);
+	// 		} else if (TYPE == ActionType.PASS) {
+	// 			sim.undoPass(prevState, prevColor);
+	// 		}
+	// 	}
 
-	}
+	// }
 
-	public enum ActionType {
-		MOVE,
-		REMOVE,
-		PASS;
-	}
+	// public enum ActionType {
+	// 	MOVE,
+	// 	REMOVE,
+	// 	PASS;
+	// }
 }
