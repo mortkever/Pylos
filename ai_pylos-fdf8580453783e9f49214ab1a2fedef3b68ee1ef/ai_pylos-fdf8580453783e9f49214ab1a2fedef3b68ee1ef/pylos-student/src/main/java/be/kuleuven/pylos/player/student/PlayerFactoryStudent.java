@@ -17,14 +17,14 @@ public class PlayerFactoryStudent extends PylosPlayerFactory {
 	protected void createTypes() {
 
 		/* example */
-		add(new PylosPlayerType("Student") {
+		add(new PylosPlayerType("Student V") {
 			@Override
 			public PylosPlayer create() {
 				return new StudentPlayerVictor();
 			}
 		});
 
-		add(new PylosPlayerType("Student") {
+		add(new PylosPlayerType("Student I") {
 			@Override
 			public PylosPlayer create() {
 				return new StudentPlayerIndra();
