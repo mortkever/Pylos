@@ -4,7 +4,9 @@ import be.kuleuven.pylos.battle.Battle;
 import be.kuleuven.pylos.player.PylosPlayer;
 import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
-import be.kuleuven.pylos.player.student.StudentPlayer;
+import be.kuleuven.pylos.player.student.StudentPlayerVictor;
+import be.kuleuven.pylos.player.student.StudentPlayerIndra;
+
 
 /**
  * Created by Jan on 20/03/2015.
@@ -21,7 +23,7 @@ public class TestMain {
 		PylosPlayer[] players = new PylosPlayer[]{bf, mm2, mm5, mm8};
 
 		for(PylosPlayer codes : players){
-			PylosPlayer student = new StudentPlayer();
+			PylosPlayer student = new StudentPlayerIndra();
 			int wins = Battle.play(student, codes, 100, false).p1Wins();
 			System.out.println(wins);
 		}
