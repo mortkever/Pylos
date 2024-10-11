@@ -16,7 +16,7 @@ public class Evaluator {
 	private static int INCOMPLETE_OPPONENT_SQUARE_SCORE = -1; // vierkanten 3/4 kralen van de tegenstander, wordt
 																// afgetrokken
 	private static int STRANGE_SQUARE_SCORE = -1; // gemengde vierkanten, wordt afgetrokken
-    
+
     public static int evaluate(PylosBoard board, PylosPlayerColor currentColor) {
 		int score = 0;
 		// telt het aantal bollen in reserve meer dan de tegenstand indien minder, is
@@ -49,6 +49,8 @@ public class Evaluator {
 				score = +INCOMPLETE_OPPONENT_SQUARE_SCORE;
 			}
 		}
+
+        //als al winnaar bepaald?
 
 		return score;
 	}
