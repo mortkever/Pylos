@@ -11,6 +11,7 @@ import be.kuleuven.pylos.player.PylosPlayerObserver;
 import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
 import be.kuleuven.pylos.player.codes.PylosPlayerRandomFit;
+import be.kuleuven.pylos.player.student.StudentPlayerIndra;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,8 +21,8 @@ public class PylosMain {
     public static void main(String[] args) {
         /* !!! jvm argument !!! -ea */
 
-        startSingleGame();
-        //startBattle();
+        //startSingleGame();
+        startBattle();
         //startBattleMultithreaded();
         //startRoundRobinTournament();
     }
@@ -42,8 +43,8 @@ public class PylosMain {
     public static void startBattle() {
         int nRuns = 100;
 
-        PylosPlayer p1 = new PylosPlayerBestFit();
-        PylosPlayer p2 = new PylosPlayerMiniMax(2);
+        PylosPlayer p1 = new StudentPlayerIndra();//new PylosPlayerBestFit();
+        PylosPlayer p2 = new  PylosPlayerRandomFit();//new PylosPlayerMiniMax(2);
 
         Battle.play(p1, p2, nRuns);
     }

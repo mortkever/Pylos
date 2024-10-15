@@ -12,6 +12,7 @@ public class BattleMain {
 
 	public static void main(String[] args){
 		Battle.play(new PylosPlayerRandomFit(), new PylosPlayerRandomFit(), 100);
+		
 	}
 
 }

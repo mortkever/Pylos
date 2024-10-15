@@ -15,6 +15,8 @@ import be.kuleuven.pylos.player.PylosPlayer;
 
 import be.kuleuven.pylos.player.Action.Action;
 import be.kuleuven.pylos.player.Action.ActionType;
+import be.kuleuven.pylos.player.SearchTree;
+
 /**
  * Created by Jan on 20/02/2015.
  */
@@ -47,28 +49,31 @@ public class StudentPlayerIndra extends PylosPlayer {
 		 * game.removeSphere(mySphere);
 		 */
 
-		// get all spheres: MOET NOG AANGEPAST WORDEN
-		// ArrayList<PylosSphere> possibleSpheres = new ArrayList<PylosSphere>();
-		ArrayList<Action> possibleActions = new ArrayList<Action>();
-		PylosSphere[] allSpheres = board.getSpheres(this.PLAYER_COLOR);
-		// select used spheres
+		Action bestAction = getBestMove(game, board);
+		bestAction.execute(game);
 
-		// check if free to take => no spheres above
-		int size = allSpheres.length;
-		for (int i = 0; i < size; i++) {
-			if (allSpheres[i].canRemove()) {
-				// possibleSpheres.add(allSpheres[i]);
-				possibleActions.add(new Action(allSpheres[i], null, null, ActionType.REMOVE));
+		// // get all spheres: MOET NOG AANGEPAST WORDEN
+		// // ArrayList<PylosSphere> possibleSpheres = new ArrayList<PylosSphere>();
+		// ArrayList<Action> possibleActions = new ArrayList<Action>();
+		// PylosSphere[] allSpheres = board.getSpheres(this.PLAYER_COLOR);
+		// // select used spheres
 
-			}
-		}
-		// get random action
-		Random rand = new Random();
-		;
-		int randomNum = rand.nextInt(((possibleActions.size() - 1) - 0) + 1) + 0; // random integer between 0 and size
+		// // check if free to take => no spheres above
+		// int size = allSpheres.length;
+		// for (int i = 0; i < size; i++) {
+		// 	if (allSpheres[i].canRemove()) {
+		// 		// possibleSpheres.add(allSpheres[i]);
+		// 		possibleActions.add(new Action(allSpheres[i], null, null, ActionType.REMOVE));
 
-		// move sphere from location to reserve
-		possibleActions.get(randomNum).execute(game);
+		// 	}
+		// }
+		// // get random action
+		// Random rand = new Random();
+		// ;
+		// int randomNum = rand.nextInt(((possibleActions.size() - 1) - 0) + 1) + 0; // random integer between 0 and size
+
+		// // move sphere from location to reserve
+		// possibleActions.get(randomNum).execute(game);
 	}
 
 	@Override
@@ -78,47 +83,54 @@ public class StudentPlayerIndra extends PylosPlayer {
 		 * game.removeSphere(mySphere);
 		 * game.pass()
 		 */
-
-		/* always pass : moet nog aangepast worden */
-		Action passAction = new Action(null, null, null, ActionType.PASS);
-		passAction.execute(game);
+		Action bestAction = getBestMove(game, board);
+		bestAction.execute(game);
+		// /* always pass : moet nog aangepast worden */
+		// Action passAction = new Action(null, null, null, ActionType.PASS);
+		// passAction.execute(game);
 	}
 
 	private Action getBestMove(PylosGameIF game, PylosBoard board) {
 
 		PylosGameSimulator simulator = new PylosGameSimulator(game.getState(), this.PLAYER_COLOR, board);
 
-		ArrayList<Action> possibleActions = new ArrayList<Action>();
-		// possible place actions
-		PylosSphere sphere = board.getReserve(this);
-		PylosLocation[] locations = board.getLocations();
-		int size = locations.length;
-		assert(size > 0);
+		//game toegevoegd
+		//public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player, PylosGame game)
+		SearchTree tree = new SearchTree(5, 1, simulator, board, this, game, null, 1); //6
+		Action action = tree.getBestAction();
+		return action;
+		//EIGEN VERSIE ERVOOR
+		// ArrayList<Action> possibleActions = new ArrayList<Action>();
+		// // possible place actions
+		// PylosSphere sphere = board.getReserve(this);
+		// PylosLocation[] locations = board.getLocations();
+		// int size = locations.length;
+		// assert(size > 0);
 		
-		for (int i = 0; i < size; i++) {
-			assert(locations[i] != null);
-			if(locations[i] != null){   //tijdelijk deze if
-				if (locations[i].isUsable()) {
-					possibleActions.add(new Action(sphere, locations[i], null, ActionType.MOVE));
-				}
-			}
+		// for (int i = 0; i < size; i++) {
+		// 	assert(locations[i] != null);
+		// 	if(locations[i] != null){   //tijdelijk deze if
+		// 		if (locations[i].isUsable()) {
+		// 			possibleActions.add(new Action(sphere, locations[i], null, ActionType.MOVE));
+		// 		}
+		// 	}
 			
-		}
+		// }
 
-		Action bestAction = null;
-		int bestScore = -999999; // kan ook gwn score van eerste actie aan toekennen
-		for (Action a : possibleActions) {
-			a.simulate(simulator);
-			int currentScore = (evaluateBoard(game, board, this.PLAYER_COLOR));
-			if (currentScore > bestScore) {
-				bestScore = currentScore;
-				bestAction = a;
-			}
+		// Action bestAction = null;
+		// int bestScore = -999999; // kan ook gwn score van eerste actie aan toekennen
+		// for (Action a : possibleActions) {
+		// 	a.simulate(simulator);
+		// 	int currentScore = (evaluateBoard(game, board, this.PLAYER_COLOR));
+		// 	if (currentScore > bestScore) {
+		// 		bestScore = currentScore;
+		// 		bestAction = a;
+		// 	}
 
-			a.undoSimulate(simulator);
-		}
+		// 	a.undoSimulate(simulator);
+		// }
 
-		return bestAction;
+		// return bestAction;
 
 	}
 
