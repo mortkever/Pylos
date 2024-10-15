@@ -109,7 +109,7 @@ public class StudentPlayerIndra extends PylosPlayer {
 		int bestScore = -999999; // kan ook gwn score van eerste actie aan toekennen
 		for (Action a : possibleActions) {
 			a.simulate(simulator);
-			int currentScore = evaluateBoard(game, board);
+			int currentScore = (evaluateBoard(game, board, this.PLAYER_COLOR));
 			if (currentScore > bestScore) {
 				bestScore = currentScore;
 				bestAction = a;
@@ -122,10 +122,13 @@ public class StudentPlayerIndra extends PylosPlayer {
 
 	}
 
-	private int evaluateBoard(PylosGameIF game, PylosBoard board) { // hoe hoger score hoe beter
-		int currentPlayerReserves = board.getReservesSize(this.PLAYER_COLOR);
-		int opponentPlayerReserves = board.getReservesSize(this.OTHER.PLAYER_COLOR);
+	private int evaluateBoard(PylosGameIF game, PylosBoard board, PylosPlayerColor color_current) { // hoe hoger score hoe beter
+		
+		int currentPlayerReserves = board.getReservesSize(color_current);
+		int opponentPlayerReserves = board.getReservesSize(color_current.other());
 		int score = currentPlayerReserves - opponentPlayerReserves;
+
+
 		return score;
 	}
 
