@@ -36,11 +36,13 @@ public class TreeVisualizer extends JPanel {
         }
 
         // Draw child nodes
-        int childX = x - (node.nodes.size() - 1) * xOffset / 2; // Center children
-        for (SearchTree child : node.nodes) {
-            g.drawLine(x, y + 20, childX, y + 100); // Connect to child
-            drawTree(g, child, childX, y + 100, xOffset / 2); // Draw child
-            childX += xOffset; // Move to the next child position
+        if (node.nodes != null) {
+            int childX = x - (node.nodes.size() - 1) * xOffset / 2; // Center children
+            for (SearchTree child : node.nodes) {
+                g.drawLine(x, y + 20, childX, y + 100); // Connect to child
+                drawTree(g, child, childX, y + 100, xOffset / 2); // Draw child
+                childX += xOffset; // Move to the next child position
+            }
         }
     }
 

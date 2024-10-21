@@ -96,7 +96,7 @@ public class StudentPlayerIndra extends PylosPlayer {
 
 		//game toegevoegd
 		//public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player, PylosGame game)
-		SearchTree tree = new SearchTree(5, 1, simulator, board, this, game, null, 1); //6
+		SearchTree tree = new SearchTree(8, 1, simulator, board, this, game, null, 1); //6
 		Action action = tree.getBestAction();
 		return action;
 		//EIGEN VERSIE ERVOOR

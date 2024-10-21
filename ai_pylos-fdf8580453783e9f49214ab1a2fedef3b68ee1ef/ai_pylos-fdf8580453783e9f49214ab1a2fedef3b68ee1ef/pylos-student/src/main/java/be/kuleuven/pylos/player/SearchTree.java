@@ -18,10 +18,8 @@ import be.kuleuven.pylos.player.Action.*;
 
 public class SearchTree {
     public Action action; // private
-    private int layer;
     private int score = 0;
     public ArrayList<SearchTree> nodes; // private
-    private int minOfMax;
 
     public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int minOfMax) {
@@ -30,10 +28,11 @@ public class SearchTree {
         nodes = new ArrayList<>();
         action = a; // actie om in die node te geraken
 
-        if (layers <= currentLayer || sim.getState() == PylosGameState.COMPLETED || (board.getReservesSize(player.PLAYER_COLOR) == 0 && sim.getState() != PylosGameState.REMOVE_FIRST)) {
+        if (layers <= currentLayer || sim.getState() == PylosGameState.COMPLETED
+                || (board.getReservesSize(player.PLAYER_COLOR) == 0 && sim.getState() != PylosGameState.REMOVE_FIRST)) {
             score = Evaluator.evaluate(board, sim.getColor());
         } else {
-
+            //Alle acties oplijsten
             ArrayList<Action> possibleActions = new ArrayList<Action>();
             switch (sim.getState()) {
                 case MOVE:
@@ -58,7 +57,8 @@ public class SearchTree {
                         if (square.isSquare() && !square.getTopLocation().isUsed()) {
                             for (PylosSphere sphere : freeSpheres) {
                                 if (sphere.canMoveTo(square.getTopLocation())) {
-                                    possibleActions.add(new Action(sphere, square.getTopLocation(), sphere.getLocation(), ActionType.MOVE));
+                                    possibleActions.add(new Action(sphere, square.getTopLocation(),
+                                            sphere.getLocation(), ActionType.MOVE));
                                 }
                             }
                         }
@@ -66,7 +66,7 @@ public class SearchTree {
                     break;
                 case REMOVE_FIRST:
                     // possibleActions = getRemoveActions(board, player);
-                    
+
                     PylosSphere[] spheres = board.getSpheres(player.PLAYER_COLOR);
                     for (PylosSphere sphere : spheres) {
                         if (sphere.canRemove()) {
@@ -78,7 +78,7 @@ public class SearchTree {
                 case REMOVE_SECOND:
                     // analoog
                     // +pass optie
-                    //possibleActions = getRemoveActions(board, player);
+                    // possibleActions = getRemoveActions(board, player);
 
                     PylosSphere[] spheres_2 = board.getSpheres(player.PLAYER_COLOR);
                     for (PylosSphere sphere : spheres_2) {
@@ -93,42 +93,28 @@ public class SearchTree {
                     sim.getWinner();
                     break;
             }
+
             // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
-            // met currentlayer++ etc en stop ze in nodes
+            // met currentlayer+1 etc en stop ze in nodes
             // undo iedere keer ook de actie
-            
             for (Action action : possibleActions) {
                 // nieuwe simulator
 
                 PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR, board);
-                
                 action.simulate(simulator);
+
                 // toegevoegd dat player switcht
                 PylosPlayer p = player;
 
-                // DIT WERKT NIET, STEL DAT JE REMOVE ACTIE HEBT OFZO DAN BLIJF JE IN VOLGENDE
-                // LAYER BIJ ZELFDE SPELER
-                // if (currentLayer % 2 != 0){
-                // //dan andere speler
-                // p = player.OTHER;
-                // }
-                int minOfMax_new = minOfMax; //zodat min max niet al verandert is voor evalueren
-                if (simulator.getState() == PylosGameState.MOVE) { // als volgende zet move is dan ben je gewisseld van
-                                                                   // speler denk ik
-                    // dan andere speler
+                int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
+                // als volgende zet move is dan ben je gewisseld van speler denk ik
+                if (simulator.getState() == PylosGameState.MOVE) {
                     p = player.OTHER;
                     minOfMax_new = minOfMax * (-1);
                 }
+
                 int next_layer = currentLayer + 1;
-                
-                nodes.add(new SearchTree(layers, next_layer, simulator, board, p, game, action, minOfMax_new)); // currentLayer++
-                                                                                                            // -> anders
-                                                                                                            // ga je
-                                                                                                            // huidige
-                                                                                                            // variabele
-                                                                                                            // ook
-                                                                                                            // telkens
-                                                                                                            // verhogen
+                nodes.add(new SearchTree(layers, next_layer, simulator, board, p, game, action, minOfMax_new));
                 // test om actie toe te voegen
                 // actie om in die node te geraken
                 // for (SearchTree n : nodes) {
@@ -138,46 +124,28 @@ public class SearchTree {
                 action.undoSimulate(simulator);
             }
 
-            // Als dat alles doorlopen is.
-            // Propageer de score naar boven toe.
-            // laag 0: eigen zetten
-            // laag 1: tegenstander zetten
-            // laag 2: eigen
-            // etc
-            // =>even maximliseer, oneven minimaliseer.
-            // if(layer%2==0){max(nodes[])}else{min(nodes[])}
-            // return zelf niets. De eindscore en actie zitten in score en action.
-            // Die moet er buiten dan maar uit gevoerd worden.
-
-            // werkte ook niet doordat speler meerdere layers aan zet kan zijn
-            // int minOfMax = 0;
-            // if (currentLayer % 2 == 0) {
-            // minOfMax = -1; // min -> aangepast want starten in laag 1
-            // } else {
-            // minOfMax = 1; // max
-            // }
-            // if(nodes.size()>0){
-            // score = nodes.get(0).score; //initialiseren op score van eerste kind
-            // }
-
+            // Score omdraaien indien de tegenstander aan zet is.
             if (nodes.size() > 0) {
-                //score = nodes.get(0).score; // initialiseren op score van eerste kind
+                // score = nodes.get(0).score; // initialiseren op score van eerste kind
                 if (minOfMax == 1) { // neem het maximum
                     score = nodes.get(0).score;
                 } else {
-                    score = nodes.get(0).score *-1;
+                    score = nodes.get(0).score * -1;
                 }
             }
 
-            for (SearchTree node : nodes) {
+            // Score naar boven propageren
+            for (int i = 0; i < nodes.size(); i++) {
                 // System.out.println(node.score + ", layer: "+currentLayer);
                 if (minOfMax == 1) { // neem het maximum
-                    if (node.score > score) {
-                        score = node.score;
+                    if (nodes.get(i).score > score) {
+                        score = nodes.get(i).score;
                     }
                 } else {
-                    if (node.score > (score * (-1))) { // neem het minimum -> terug maximum? want dan wordt gekeken tov min speler, dus die wil zijn score ook maximaliseren, gwn *-1 dan om uiteindelijke
-                        score = (node.score * (-1)); //* (-1)
+                    if (nodes.get(i).score > (score * (-1))) { // neem het minimum -> terug maximum? want dan wordt
+                                                               // gekeken tov min speler, dus die wil zijn score ook
+                                                               // maximaliseren, gwn *-1 dan om uiteindelijke
+                        score = (nodes.get(i).score * (-1)); // * (-1)
                     }
                 }
                 // System.out.println("node score: " + node.score);
@@ -185,6 +153,7 @@ public class SearchTree {
                 // score = node.score *minOfMax ; //minOfMax is test
 
                 // }
+                nodes.get(i).nodes = null;
             }
         }
 
@@ -218,7 +187,7 @@ public class SearchTree {
                 bestAction = s.action;
             }
         }
-        //TreeVisualizer.showTree(this);
+        // TreeVisualizer.showTree(this);
         return bestAction;
     }
 
