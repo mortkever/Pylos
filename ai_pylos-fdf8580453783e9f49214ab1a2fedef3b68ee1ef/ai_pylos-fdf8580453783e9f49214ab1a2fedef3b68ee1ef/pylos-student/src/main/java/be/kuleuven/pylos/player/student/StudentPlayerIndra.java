@@ -22,6 +22,7 @@ import be.kuleuven.pylos.player.SearchTree;
  */
 public class StudentPlayerIndra extends PylosPlayer {
 
+	int depth = 5;
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {
 		/*
@@ -96,126 +97,13 @@ public class StudentPlayerIndra extends PylosPlayer {
 
 		//game toegevoegd
 		//public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player, PylosGame game)
-		SearchTree tree = new SearchTree(8, 1, simulator, board, this, game, null, 1); //6
+		SearchTree tree = new SearchTree(depth, 1, simulator, board, this, game, null, 1); //6
 		Action action = tree.getBestAction();
 		return action;
-		//EIGEN VERSIE ERVOOR
-		// ArrayList<Action> possibleActions = new ArrayList<Action>();
-		// // possible place actions
-		// PylosSphere sphere = board.getReserve(this);
-		// PylosLocation[] locations = board.getLocations();
-		// int size = locations.length;
-		// assert(size > 0);
-		
-		// for (int i = 0; i < size; i++) {
-		// 	assert(locations[i] != null);
-		// 	if(locations[i] != null){   //tijdelijk deze if
-		// 		if (locations[i].isUsable()) {
-		// 			possibleActions.add(new Action(sphere, locations[i], null, ActionType.MOVE));
-		// 		}
-		// 	}
-			
-		// }
 
-		// Action bestAction = null;
-		// int bestScore = -999999; // kan ook gwn score van eerste actie aan toekennen
-		// for (Action a : possibleActions) {
-		// 	a.simulate(simulator);
-		// 	int currentScore = (evaluateBoard(game, board, this.PLAYER_COLOR));
-		// 	if (currentScore > bestScore) {
-		// 		bestScore = currentScore;
-		// 		bestAction = a;
-		// 	}
-
-		// 	a.undoSimulate(simulator);
-		// }
-
-		// return bestAction;
 
 	}
 
-	private int evaluateBoard(PylosGameIF game, PylosBoard board, PylosPlayerColor color_current) { // hoe hoger score hoe beter
-		
-		int currentPlayerReserves = board.getReservesSize(color_current);
-		int opponentPlayerReserves = board.getReservesSize(color_current.other());
-		int score = currentPlayerReserves - opponentPlayerReserves;
 
 
-		return score;
-	}
-
-	//public static class Action {
-		// later: lijst van alle mogelijke toekomstige moves (eigen moves en moves
-		// tegenstander, dus ook kleur meegeven)
-		// en dan daaruit later beste kan kiezen
-		// of state (er was nog 1)
-
-		// ActionType TYPE;
-		// PylosSphere SPHERE;
-		// PylosLocation TO;
-		// PylosLocation FROM;
-
-		// PylosGameState prevState;
-		// PylosPlayerColor prevColor;
-
-		// ...
-		// reversesimulate
-		// simulate
-		// execute
-
-	// 	public Action(PylosSphere sphere, PylosLocation to, PylosLocation from, ActionType type) {
-	// 		this.SPHERE = sphere;
-	// 		this.TO = to;
-	// 		this.FROM = from;
-	// 		this.TYPE = type;
-	// 	}
-
-	// 	public void execute(PylosGameIF game) {
-	// 		if (TYPE == ActionType.MOVE) {
-	// 			game.moveSphere(SPHERE, TO);
-	// 		} else if (TYPE == ActionType.REMOVE) {
-	// 			game.removeSphere(SPHERE);
-	// 		} else if (TYPE == ActionType.PASS) {
-	// 			game.pass();
-	// 		}
-	// 	}
-
-	// 	// new
-	// 	public void simulate(PylosGameSimulator sim) {
-	// 		prevState = sim.getState(); // niet zeker of die twee juist
-	// 		prevColor = sim.getColor();
-	// 		if (TYPE == ActionType.MOVE) {
-	// 			sim.moveSphere(SPHERE, TO);
-				
-	// 		} else if (TYPE == ActionType.REMOVE) {
-	// 			sim.removeSphere(SPHERE);
-	// 		} else if (TYPE == ActionType.PASS) {
-	// 			sim.pass();
-	// 		}
-	// 	}
-
-	// 	// nog undo
-	// 	public void undoSimulate(PylosGameSimulator sim) {
-	// 		if (TYPE == ActionType.MOVE) {
-	// 			if(FROM == null){
-	// 				sim.undoAddSphere(SPHERE, prevState, prevColor);
-	// 			}	
-	// 			else{
-	// 				sim.undoMoveSphere(SPHERE, FROM, prevState, prevColor);
-	// 			}
-				
-	// 		} else if (TYPE == ActionType.REMOVE) {
-	// 			sim.undoRemoveFirstSphere(SPHERE, FROM, prevState, prevColor);
-	// 		} else if (TYPE == ActionType.PASS) {
-	// 			sim.undoPass(prevState, prevColor);
-	// 		}
-	// 	}
-
-	// }
-
-	// public enum ActionType {
-	// 	MOVE,
-	// 	REMOVE,
-	// 	PASS;
-	// }
 }

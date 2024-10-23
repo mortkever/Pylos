@@ -95,7 +95,7 @@ public class SearchTree {
             }
 
             // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
-            // met currentlayer+1 etc en stop ze in nodes
+            // met currentlayer++ etc en stop ze in nodes
             // undo iedere keer ook de actie
             for (Action action : possibleActions) {
                 // nieuwe simulator
