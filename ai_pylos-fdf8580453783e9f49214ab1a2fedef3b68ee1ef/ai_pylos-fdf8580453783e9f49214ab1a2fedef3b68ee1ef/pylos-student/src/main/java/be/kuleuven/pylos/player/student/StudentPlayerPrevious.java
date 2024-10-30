@@ -15,12 +15,11 @@ import be.kuleuven.pylos.player.PylosPlayer;
 
 import be.kuleuven.pylos.player.Action.Action;
 import be.kuleuven.pylos.player.Action.ActionType;
-import be.kuleuven.pylos.player.SearchTree;
+import be.kuleuven.pylos.player.SearchTreeNew;
+import be.kuleuven.pylos.player.SearchTreePrevious;
 
-/**
- * Created by Jan on 20/02/2015.
- */
-public class StudentPlayerIndra extends PylosPlayer {
+
+public class StudentPlayerPrevious extends PylosPlayer {
 
 	int depth = 5;
 	@Override
@@ -97,7 +96,7 @@ public class StudentPlayerIndra extends PylosPlayer {
 
 		//game toegevoegd
 		//public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player, PylosGame game)
-		SearchTree tree = new SearchTree(depth, 1, simulator, board, this, game, null, 1, Integer.MIN_VALUE, Integer.MAX_VALUE); //6
+		SearchTreePrevious tree = new SearchTreePrevious(depth, 1, simulator, board, this, game, null, 1, Integer.MIN_VALUE, Integer.MAX_VALUE); //6
 		Action action = tree.getBestAction();
 		return action;
 

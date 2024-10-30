@@ -6,7 +6,7 @@ import be.kuleuven.pylos.game.PylosPlayerColor;
 import be.kuleuven.pylos.game.PylosSphere;
 import be.kuleuven.pylos.game.PylosSquare;
 
-public class Evaluator {
+public class EvaluatorPrevious {
 
 	// beetje gespeeld met getallen
 	private static int OWN_SQUARE_SCORE = 200; // eigen vierkant gecreerd

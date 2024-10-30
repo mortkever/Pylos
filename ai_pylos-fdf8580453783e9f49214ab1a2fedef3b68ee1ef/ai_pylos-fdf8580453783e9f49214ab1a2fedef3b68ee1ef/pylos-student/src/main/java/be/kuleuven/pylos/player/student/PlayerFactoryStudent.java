@@ -17,17 +17,17 @@ public class PlayerFactoryStudent extends PylosPlayerFactory {
 	protected void createTypes() {
 
 		/* example */
-		add(new PylosPlayerType("Student V") {
+		add(new PylosPlayerType("Student previous version") {
 			@Override
 			public PylosPlayer create() {
-				return new StudentPlayerVictor();
+				return new StudentPlayerPrevious();
 			}
 		});
 
-		add(new PylosPlayerType("Student I") {
+		add(new PylosPlayerType("Student New version") {
 			@Override
 			public PylosPlayer create() {
-				return new StudentPlayerIndra();
+				return new StudentPlayerNew();
 			}
 		});
 

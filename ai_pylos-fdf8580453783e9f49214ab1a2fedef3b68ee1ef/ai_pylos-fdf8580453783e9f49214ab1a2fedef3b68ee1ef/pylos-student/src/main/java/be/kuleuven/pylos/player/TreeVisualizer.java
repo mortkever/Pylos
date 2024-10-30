@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import be.kuleuven.pylos.player.Action.*;
 
 public class TreeVisualizer extends JPanel {
-    private SearchTree root;
+    private SearchTreeNew root;
 
-    public TreeVisualizer(SearchTree root) {
+    public TreeVisualizer(SearchTreeNew root) {
         this.root = root;
         setPreferredSize(new Dimension(2400, 1200));
     }
@@ -21,7 +21,7 @@ public class TreeVisualizer extends JPanel {
         drawTree(g, root, getWidth() / 2, 30, 180);
     }
 
-    private void drawTree(Graphics g, SearchTree node, int x, int y, int xOffset) {
+    private void drawTree(Graphics g, SearchTreeNew node, int x, int y, int xOffset) {
         if (node == null)
             return;
 
@@ -38,7 +38,7 @@ public class TreeVisualizer extends JPanel {
         // Draw child nodes
         if (node.nodes != null) {
             int childX = x - (node.nodes.size() - 1) * xOffset / 2; // Center children
-            for (SearchTree child : node.nodes) {
+            for (SearchTreeNew child : node.nodes) {
                 g.drawLine(x, y + 20, childX, y + 100); // Connect to child
                 drawTree(g, child, childX, y + 100, xOffset / 2); // Draw child
                 childX += xOffset; // Move to the next child position
@@ -46,7 +46,7 @@ public class TreeVisualizer extends JPanel {
         }
     }
 
-    public static void showTree(SearchTree tree) {
+    public static void showTree(SearchTreeNew tree) {
         JFrame frame = new JFrame("Search Tree Visualizer");
         TreeVisualizer visualizer = new TreeVisualizer(tree);
         frame.add(visualizer);

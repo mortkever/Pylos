@@ -16,12 +16,12 @@ import be.kuleuven.pylos.game.PylosBoard;
 import be.kuleuven.pylos.game.PylosGame;
 import be.kuleuven.pylos.player.Action.*;
 
-public class SearchTree {
+public class SearchTreePrevious {
     public Action action; // private
     private int score = 0;
-    public ArrayList<SearchTree> nodes; // private
+    public ArrayList<SearchTreePrevious> nodes; // private
 
-    public SearchTree(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
+    public SearchTreePrevious(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int minOfMax, int alfa, int beta) {
 
         // initialiseren van nodes (I)
@@ -30,7 +30,7 @@ public class SearchTree {
 
         if (layers <= currentLayer || sim.getState() == PylosGameState.COMPLETED
                 || (board.getReservesSize(player.PLAYER_COLOR) == 0 && sim.getState() != PylosGameState.REMOVE_FIRST)) {
-            score = Evaluator.evaluate(board, sim.getColor());
+            score = EvaluatorPrevious.evaluate(board, sim.getColor());
         } else {
             // Alle acties oplijsten
             ArrayList<Action> possibleActions = new ArrayList<Action>();
@@ -117,7 +117,7 @@ public class SearchTree {
                     }
 
                     int next_layer = currentLayer + 1;
-                    SearchTree tree = new SearchTree(layers, next_layer, simulator, board, p, game, action,
+                    SearchTreePrevious tree = new SearchTreePrevious(layers, next_layer, simulator, board, p, game, action,
                             minOfMax_new,
                             alfa_new,
                             beta_new);
@@ -194,10 +194,10 @@ public class SearchTree {
     public Action getBestAction() {
         if (nodes.size() == 0) {
             System.out.println("info: " + action);
-            TreeVisualizer.showTree(this);
+            //TreeVisualizer.showTree(this);
         }
         Action bestAction = nodes.get(0).action;
-        for (SearchTree s : nodes) {
+        for (SearchTreePrevious s : nodes) {
             if (s.getScore() == score) {
                 // System.out.println("score: " + score);
                 bestAction = s.action;

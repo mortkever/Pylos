@@ -16,13 +16,13 @@ import be.kuleuven.pylos.game.PylosBoard;
 import be.kuleuven.pylos.game.PylosGame;
 import be.kuleuven.pylos.player.Action.*;
 
-public class SearchTree_noPruning {
+public class SearchTreeNew {
     public Action action; // private
     private int score = 0;
-    public ArrayList<SearchTree_noPruning> nodes; // private
+    public ArrayList<SearchTreeNew> nodes; // private
 
-    public SearchTree_noPruning(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
-            PylosGameIF game, Action a, int minOfMax) {
+    public SearchTreeNew(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
+            PylosGameIF game, Action a, int minOfMax, int alfa, int beta) {
 
         // initialiseren van nodes (I)
         nodes = new ArrayList<>();
@@ -30,9 +30,9 @@ public class SearchTree_noPruning {
 
         if (layers <= currentLayer || sim.getState() == PylosGameState.COMPLETED
                 || (board.getReservesSize(player.PLAYER_COLOR) == 0 && sim.getState() != PylosGameState.REMOVE_FIRST)) {
-            score = Evaluator.evaluate(board, sim.getColor());
+            score = EvaluatorNew.evaluate(board, sim.getColor());
         } else {
-            //Alle acties oplijsten
+            // Alle acties oplijsten
             ArrayList<Action> possibleActions = new ArrayList<Action>();
             switch (sim.getState()) {
                 case MOVE:
@@ -97,31 +97,47 @@ public class SearchTree_noPruning {
             // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
             // met currentlayer++ etc en stop ze in nodes
             // undo iedere keer ook de actie
+            int alfa_new = Integer.MIN_VALUE;
+            int beta_new = Integer.MAX_VALUE;
+            boolean prune = false;
             for (Action action : possibleActions) {
-                // nieuwe simulator
+                if (!prune) {
+                    // nieuwe simulator
+                    PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR, board);
+                    action.simulate(simulator);
 
-                PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR, board);
-                action.simulate(simulator);
+                    // toegevoegd dat player switcht
+                    PylosPlayer p = player;
 
-                // toegevoegd dat player switcht
-                PylosPlayer p = player;
+                    int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
+                    // als volgende zet move is dan ben je gewisseld van speler denk ik
+                    if (simulator.getState() == PylosGameState.MOVE) {
+                        p = player.OTHER;
+                        minOfMax_new = minOfMax * (-1);
+                    }
 
-                int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
-                // als volgende zet move is dan ben je gewisseld van speler denk ik
-                if (simulator.getState() == PylosGameState.MOVE) {
-                    p = player.OTHER;
-                    minOfMax_new = minOfMax * (-1);
+                    int next_layer = currentLayer + 1;
+                    SearchTreeNew tree = new SearchTreeNew(layers, next_layer, simulator, board, p, game, action,
+                            minOfMax_new,
+                            alfa_new,
+                            beta_new);
+                    nodes.add(tree);
+                    if (minOfMax == -1) {
+                        if (tree.score >= beta_new)
+                            alfa_new = tree.score;
+                        if (tree.score < alfa) {
+                            prune = true;
+                        }
+                    } else {
+                        if (tree.score <= alfa_new)
+                            alfa_new = tree.score;
+                        if (tree.score > beta) {
+                            prune = true;
+                        }
+                    }
+
+                    action.undoSimulate(simulator);
                 }
-
-                int next_layer = currentLayer + 1;
-                nodes.add(new SearchTree_noPruning(layers, next_layer, simulator, board, p, game, action, minOfMax_new));
-                // test om actie toe te voegen
-                // actie om in die node te geraken
-                // for (SearchTree n : nodes) {
-                // n.action = action;
-                // }
-
-                action.undoSimulate(simulator);
             }
 
             // Score omdraaien indien de tegenstander aan zet is.
@@ -178,10 +194,10 @@ public class SearchTree_noPruning {
     public Action getBestAction() {
         if (nodes.size() == 0) {
             System.out.println("info: " + action);
-           // TreeVisualizer.showTree(this);
+            TreeVisualizer.showTree(this);
         }
         Action bestAction = nodes.get(0).action;
-        for (SearchTree_noPruning s : nodes) {
+        for (SearchTreeNew s : nodes) {
             if (s.getScore() == score) {
                 // System.out.println("score: " + score);
                 bestAction = s.action;
