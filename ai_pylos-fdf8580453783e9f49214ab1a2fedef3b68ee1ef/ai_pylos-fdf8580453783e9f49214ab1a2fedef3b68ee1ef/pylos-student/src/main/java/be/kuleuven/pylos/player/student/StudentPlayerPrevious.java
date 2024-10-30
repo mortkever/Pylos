@@ -21,7 +21,7 @@ import be.kuleuven.pylos.player.SearchTreePrevious;
 
 public class StudentPlayerPrevious extends PylosPlayer {
 
-	int depth = 5;
+	int depth = 3;
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {
 		/*

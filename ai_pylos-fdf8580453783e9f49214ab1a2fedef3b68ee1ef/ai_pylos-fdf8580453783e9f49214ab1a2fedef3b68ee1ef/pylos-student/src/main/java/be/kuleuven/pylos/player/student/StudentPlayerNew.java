@@ -20,7 +20,7 @@ import be.kuleuven.pylos.player.SearchTreeNew;
 
 public class StudentPlayerNew extends PylosPlayer {
 
-	int depth = 5;
+	int depth = 3;
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {
 		/*

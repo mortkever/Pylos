@@ -16,10 +16,12 @@ import be.kuleuven.pylos.game.PylosBoard;
 import be.kuleuven.pylos.game.PylosGame;
 import be.kuleuven.pylos.player.Action.*;
 
-public class SearchTreePrevious {
+public class SearchTreePrevious{
     public Action action; // private
     private int score = 0;
     public ArrayList<SearchTreePrevious> nodes; // private
+    private boolean done = false;
+    public Action best_action_direct = null;
 
     public SearchTreePrevious(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int minOfMax, int alfa, int beta) {
@@ -94,45 +96,40 @@ public class SearchTreePrevious {
                     break;
             }
 
-            // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
-            // met currentlayer++ etc en stop ze in nodes
-            // undo iedere keer ook de actie
-            int alfa_new = Integer.MIN_VALUE;
-            int beta_new = Integer.MAX_VALUE;
-            boolean prune = false;
-            for (Action action : possibleActions) {
-                if (!prune) {
-                    // nieuwe simulator
-                    PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR, board);
+            // In eerste move kijken of mogelijk om direct
+            // vierkant met 3 bollen van ander kleur te saboteren dan direct saboteren
+            // vierkant van zichzelf te creeren dan vierkant creeeren
+
+            if (currentLayer == 1) {
+                PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR, board);
+
+                int amount_almost_squares_other_before_move = EvaluatorPrevious.amount_almost_squares_other(board,
+                        player.PLAYER_COLOR);
+
+                int amount_almost_own_squares_before_move = EvaluatorPrevious.amount_almost_squares_own(board,
+                        player.PLAYER_COLOR);
+                
+                for (Action action : possibleActions) {
                     action.simulate(simulator);
 
-                    // toegevoegd dat player switcht
-                    PylosPlayer p = player;
-
-                    int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
-                    // als volgende zet move is dan ben je gewisseld van speler denk ik
-                    if (simulator.getState() == PylosGameState.MOVE) {
-                        p = player.OTHER;
-                        minOfMax_new = minOfMax * (-1);
+                int amount_almost_squares_other_after_move = EvaluatorPrevious.amount_almost_squares_other(board,
+                        player.PLAYER_COLOR);
+                    // als andere kan blokkeren
+                    if (amount_almost_squares_other_before_move > amount_almost_squares_other_after_move) {
+                        done = true;
+                        best_action_direct = action;
+                        // System.out.println("block other");
                     }
 
-                    int next_layer = currentLayer + 1;
-                    SearchTreePrevious tree = new SearchTreePrevious(layers, next_layer, simulator, board, p, game, action,
-                            minOfMax_new,
-                            alfa_new,
-                            beta_new);
-                    nodes.add(tree);
-                    if (minOfMax == -1) {
-                        if (tree.score >= beta_new)
-                            alfa_new = tree.score;
-                        if (tree.score < alfa) {
-                            prune = true;
-                        }
-                    } else {
-                        if (tree.score <= alfa_new)
-                            alfa_new = tree.score;
-                        if (tree.score > beta) {
-                            prune = true;
+                    // als geen sabotage, dan kijken of eigen vierkant kan vullen
+                    if (best_action_direct == null) {
+                        int amount_almost_own_squares_after_move = EvaluatorPrevious.amount_almost_squares_own(board,
+                                player.PLAYER_COLOR);
+                        // als eigen vierkant kan dan doen
+                        if (amount_almost_own_squares_before_move > amount_almost_own_squares_after_move) {
+                            done = true;
+                            best_action_direct = action;
+                            // System.out.println("create square");
                         }
                     }
 
@@ -140,36 +137,89 @@ public class SearchTreePrevious {
                 }
             }
 
-            // Score omdraaien indien de tegenstander aan zet is.
-            if (nodes.size() > 0) {
-                // score = nodes.get(0).score; // initialiseren op score van eerste kind
-                if (minOfMax == 1) { // neem het maximum
-                    score = nodes.get(0).score;
-                } else {
-                    score = nodes.get(0).score * -1;
-                }
-            }
+            if (!done) {
+                // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
+                // met currentlayer++ etc en stop ze in nodes
+                // undo iedere keer ook de actie
+                int alfa_new = Integer.MIN_VALUE;
+                int beta_new = Integer.MAX_VALUE;
 
-            // Score naar boven propageren
-            for (int i = 0; i < nodes.size(); i++) {
-                // System.out.println(node.score + ", layer: "+currentLayer);
-                if (minOfMax == 1) { // neem het maximum
-                    if (nodes.get(i).score > score) {
-                        score = nodes.get(i).score;
-                    }
-                } else {
-                    if (nodes.get(i).score > (score * (-1))) { // neem het minimum -> terug maximum? want dan wordt
-                                                               // gekeken tov min speler, dus die wil zijn score ook
-                                                               // maximaliseren, gwn *-1 dan om uiteindelijke
-                        score = (nodes.get(i).score * (-1)); // * (-1)
+                boolean prune = false;
+                for (Action action : possibleActions) {
+                    if (!prune) {
+                        // nieuwe simulator
+                        PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR,
+                                board);
+                        action.simulate(simulator);
+
+                        // toegevoegd dat player switcht
+                        PylosPlayer p = player;
+
+                        int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
+                        // als volgende zet move is dan ben je gewisseld van speler denk ik
+                        if (simulator.getState() == PylosGameState.MOVE) {
+                            p = player.OTHER;
+                            minOfMax_new = minOfMax * (-1);
+                        }
+
+                        int next_layer = currentLayer + 1;
+                        SearchTreePrevious tree = new SearchTreePrevious(layers, next_layer, simulator, board, p, game, action,
+                                minOfMax_new,
+                                alfa_new,
+                                beta_new);
+                        nodes.add(tree);
+                        if (minOfMax == -1) {
+                            if (tree.score >= beta_new)
+                                alfa_new = tree.score;
+                            if (tree.score < alfa) {
+                                prune = true;
+                            }
+                        } else {
+                            if (tree.score <= alfa_new)
+                                alfa_new = tree.score;
+                            if (tree.score > beta) {
+                                prune = true;
+                            }
+                        }
+
+                        action.undoSimulate(simulator);
                     }
                 }
-                // System.out.println("node score: " + node.score);
-                // if (node.score* minOfMax > score * minOfMax ) { //tweede efkes weg * minOfMax
-                // score = node.score *minOfMax ; //minOfMax is test
 
-                // }
-                nodes.get(i).nodes = null;
+                // Score omdraaien indien de tegenstander aan zet is.
+                if (nodes.size() > 0) {
+                    // score = nodes.get(0).score; // initialiseren op score van eerste kind
+                    if (minOfMax == 1) { // neem het maximum
+                        score = nodes.get(0).score;
+                    } else {
+                        score = nodes.get(0).score * -1;
+                    }
+                }
+
+                // Score naar boven propageren
+                for (int i = 0; i < nodes.size(); i++) {
+                    // System.out.println(node.score + ", layer: "+currentLayer);
+                    if (minOfMax == 1) { // neem het maximum
+                        // if (nodes.get(i).score > score) {
+                        // score = nodes.get(i).score;
+                        // }
+                        score = Math.max(score, nodes.get(i).score);
+                    } else {
+                        // if (nodes.get(i).score > (score * (-1))) { // neem het minimum -> terug
+                        // maximum? want dan wordt
+                        // gekeken tov min speler, dus die wil zijn score ook
+                        // maximaliseren, gwn *-1 dan om uiteindelijke
+                        // score = (nodes.get(i).score * (-1)); // * (-1)
+                        // }
+                        score = Math.min(score, (-1) * nodes.get(i).score);
+                    }
+                    // System.out.println("node score: " + node.score);
+                    // if (node.score* minOfMax > score * minOfMax ) { //tweede efkes weg * minOfMax
+                    // score = node.score *minOfMax ; //minOfMax is test
+
+                    // }
+                    nodes.get(i).nodes = null;
+                }
             }
         }
 
@@ -192,6 +242,9 @@ public class SearchTreePrevious {
     }
 
     public Action getBestAction() {
+        if (best_action_direct != null) {
+            return best_action_direct;
+        }
         if (nodes.size() == 0) {
             System.out.println("info: " + action);
             //TreeVisualizer.showTree(this);

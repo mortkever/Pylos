@@ -10,18 +10,19 @@ public class EvaluatorNew {
 
 	// beetje gespeeld met getallen
 	private static int OWN_SQUARE_SCORE = 200; // eigen vierkant gecreerd
-	private static int POSSIBLE_STRANGE_SQUARE = 100; // potentiele vierkanten (3/4) met een mix aan kralen.
-	private static int EXCESS_RESERVE_SCORE = 50; // multiplier voor het aantal ballen meer dan de tegenstander
+	//volgende komt precies beter uit als neg is in resultaten
+	private static int POSSIBLE_STRANGE_SQUARE = -100; // potentiele vierkanten (3/4) met een mix aan kralen.
+	private static int EXCESS_RESERVE_SCORE = 150; // multiplier voor het aantal ballen meer dan de tegenstander
 	private static int TWO_REMOVE_BONUS_SCORE = 120; // bonus voor situatie met twee wegneembare kralen bij eigen
 														// vierkant
 
 	// Slechte staat van het bord, wordt de score voor verlaagd.
-	private static int INCOMPLETE_OPPONENT_SQUARE_SCORE = -200; // vierkanten 3/4 kralen van de tegenstander, wordt
+	private static int INCOMPLETE_OPPONENT_SQUARE_SCORE = -50; // vierkanten 3/4 kralen van de tegenstander, wordt
 																// afgetrokken
-	private static int STRANGE_SQUARE_SCORE = -50; // gemengde vierkanten, wordt afgetrokken
+	private static int STRANGE_SQUARE_SCORE = -100; // gemengde vierkanten, wordt afgetrokken
 
 	// je bent hoger dan opponent
-	private static int HIGHER_THAN_OPPONENT_SCORE = 200;
+	private static int HIGHER_THAN_OPPONENT_SCORE = 400;
 
 	// je bent lager dan opponent
 	private static int LOWER_THAN_OPPONENT_SCORE = -200;
@@ -37,7 +38,7 @@ public class EvaluatorNew {
 	// aantal keer reservebollen meer waard
 	private static int WEIGHT_ENDGAME = 2;
 
-	private static int CENTER_BONUS = 15;
+	private static int CENTER_BONUS = 0;
 
 	public static int evaluate(PylosBoard board, PylosPlayerColor currentColor) {
 		int score = 0;
@@ -47,28 +48,28 @@ public class EvaluatorNew {
 		for (PylosSquare square : squares) {
 			// Altijd eerst andere vierkanten blokkeren
 			if (square.getInSquare() == 3 && square.getInSquare(currentColor.other()) == 3) {
-				//score = -20000;
+				// score = -20000;
 				score += INCOMPLETE_OPPONENT_SQUARE_SCORE;
 				// eventueel nog kijken of het een vierkant is waarbij hij twee bollen kan
 				// wegnemen of 1 bol
-				return score;
+				// return score;
 			}
 			// Eigen vierkanten creëeren
 			if (square.isSquare(currentColor) && !square.getTopLocation().isUsed()) {
-				// score+= OWN_SQUARE_SCORE;
+				score += OWN_SQUARE_SCORE;
 				int aantal = 0;
 				for (PylosLocation loc : locations) {
 					if (!loc.hasAbove() && loc.getSphere() != null && loc.getSphere().PLAYER_COLOR == currentColor)
 						aantal++;
 				}
 				if (aantal > 1) {
-					// score += TWO_REMOVE_BONUS_SCORE;
+					score += TWO_REMOVE_BONUS_SCORE;
 					// eigen vierkant gecreëerd en je kunt 2 bollen wegnemen
-					score = 15000;
+					// score = 15000;
 				} else {
-					score = 10000;
+					// score = 10000;
 				}
-				return score;
+				// return score;
 
 			}
 
@@ -154,4 +155,44 @@ public class EvaluatorNew {
 
 		return score;
 	}
+
+	// returns amount of squares with 3 balls of other color
+	public static int amount_almost_squares_other(PylosBoard board, PylosPlayerColor currentColor) {
+		int amount = 0;
+		PylosSquare[] squares = board.getAllSquares();
+		//PylosLocation[] locations = board.getLocations();
+
+		for (PylosSquare square : squares) {
+			// Altijd eerst andere vierkanten blokkeren
+			if (square.getInSquare() == 3 && square.getInSquare(currentColor.other()) == 3) {
+				// score = -20000;
+				amount += 1;
+				// eventueel nog kijken of het een vierkant is waarbij hij twee bollen kan
+				// wegnemen of 1 bol
+				// return score;
+			}
+			// Eigen vierkanten creëeren
+		}
+		return amount;
+	}
+
+
+    public static int amount_almost_squares_own(PylosBoard board, PylosPlayerColor currentColor) {
+        int amount = 0;
+		PylosSquare[] squares = board.getAllSquares();
+		//PylosLocation[] locations = board.getLocations();
+
+		for (PylosSquare square : squares) {
+			// Altijd eerst andere vierkanten blokkeren
+			if (square.getInSquare() == 3 && square.getInSquare(currentColor) == 3) {
+				// score = -20000;
+				amount += 1;
+				// eventueel nog kijken of het een vierkant is waarbij hij twee bollen kan
+				// wegnemen of 1 bol
+				// return score;
+			}
+			// Eigen vierkanten creëeren
+		}
+		return amount;
+    }
 }
