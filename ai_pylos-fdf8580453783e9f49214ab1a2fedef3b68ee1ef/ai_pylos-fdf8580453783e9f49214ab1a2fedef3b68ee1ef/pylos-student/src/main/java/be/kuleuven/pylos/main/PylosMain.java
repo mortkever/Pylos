@@ -13,6 +13,8 @@ import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
 import be.kuleuven.pylos.player.codes.PylosPlayerRandomFit;
 import be.kuleuven.pylos.player.student.StudentPlayerNew;
 import be.kuleuven.pylos.player.student.StudentPlayerPrevious;
+import be.kuleuven.pylos.player.student.StudentPlayerV1;
+import be.kuleuven.pylos.player.student.StudentPlayerV2;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,13 +44,13 @@ public class PylosMain {
     }
 
     public static void startBattle() {
-        int nRuns = 100;
+        int nRuns = 1000;
 
-        PylosPlayer p1 = new StudentPlayerNew();//new PylosPlayerBestFit();
-        PylosPlayer p2 = new StudentPlayerPrevious();
+        //PylosPlayer p1 = new StudentPlayerV1();//new PylosPlayerBestFit();
+        PylosPlayer p1 = new StudentPlayerV2();
 
         //PylosPlayer p2 = new PylosPlayerRandomFit();
-        //PylosPlayer p2 = new PylosPlayerMiniMax(1); //new  PylosPlayerRandomFit();//
+        PylosPlayer p2 = new PylosPlayerMiniMax(4); //new  PylosPlayerRandomFit();//
 
         Battle.play(p1, p2, nRuns);
     }
