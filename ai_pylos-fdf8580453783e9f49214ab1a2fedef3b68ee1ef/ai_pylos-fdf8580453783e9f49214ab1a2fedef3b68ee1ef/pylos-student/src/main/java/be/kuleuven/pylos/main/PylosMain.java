@@ -15,6 +15,8 @@ import be.kuleuven.pylos.player.student.StudentPlayerNew;
 import be.kuleuven.pylos.player.student.StudentPlayerPrevious;
 import be.kuleuven.pylos.player.student.StudentPlayerV1;
 import be.kuleuven.pylos.player.student.StudentPlayerV2;
+import be.kuleuven.pylos.player.student.StudentPlayerV5;
+import be.kuleuven.pylos.player.student.StudentPlayerV3;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,8 +36,11 @@ public class PylosMain {
 
         Random random = new Random(0);
 
-        PylosPlayer playerLight = new PylosPlayerRandomFit();
+        PylosPlayer playerLight = new StudentPlayerV5();
         PylosPlayer playerDark = new PylosPlayerMiniMax(2);
+
+        //PylosPlayer playerLight = new PylosPlayerRandomFit();
+        //PylosPlayer playerDark = new PylosPlayerMiniMax(2);
 
         PylosBoard pylosBoard = new PylosBoard();
         PylosGame pylosGame = new PylosGame(pylosBoard, playerLight, playerDark, random, PylosGameObserver.CONSOLE_GAME_OBSERVER, PylosPlayerObserver.NONE);
@@ -44,13 +49,16 @@ public class PylosMain {
     }
 
     public static void startBattle() {
-        int nRuns = 1000;
+        int nRuns = 100;
 
-        //PylosPlayer p1 = new StudentPlayerV1();//new PylosPlayerBestFit();
-        PylosPlayer p1 = new StudentPlayerV2();
+        //PylosPlayer p1 = new StudentPlayerV2();//new PylosPlayerBestFit();
+        PylosPlayer p1 = new StudentPlayerV5();
 
+        //PylosPlayer p2 = new StudentPlayerV3();
+        PylosPlayer p2 = new PylosPlayerMiniMax(4);
         //PylosPlayer p2 = new PylosPlayerRandomFit();
-        PylosPlayer p2 = new PylosPlayerMiniMax(4); //new  PylosPlayerRandomFit();//
+        //PylosPlayer p2 = new PylosPlayerBestFit();
+        //PylosPlayer p2 = new PylosPlayerMiniMax(4); //new  PylosPlayerRandomFit();//
 
         Battle.play(p1, p2, nRuns);
     }
@@ -64,11 +72,12 @@ public class PylosMain {
         //as this is not ideal for use across multiple threads.
         //Use Collections.shuffle(List<?> list, Random random) instead, with the Random object from the player
 
-        int nRuns = 1000;
-        int nThreads = 8;
+        int nRuns = 1000;//1000;
+        int nThreads = 8; //8
 
-        Class<? extends PylosPlayer> c1 = PylosPlayerBestFit.class;
-        Class<? extends PylosPlayer> c2 = PylosPlayerMiniMax2.class;
+        Class<? extends PylosPlayer> c1 = StudentPlayerV5.class;
+        //Class<? extends PylosPlayer> c1 = PylosPlayerBestFit.class;
+        Class<? extends PylosPlayer> c2 = PylosPlayerMiniMax4.class;
 
         BattleMT.play(c1, c2, nRuns, nThreads);
     }

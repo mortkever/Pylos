@@ -248,7 +248,7 @@ public class SearchTreeNew {
         }
         if (nodes.size() == 0) {
             System.out.println("info: " + action);
-            TreeVisualizer.showTree(this);
+            //TreeVisualizer.showTree(this);
         }
         Action bestAction = nodes.get(0).action;
         for (SearchTreeNew s : nodes) {

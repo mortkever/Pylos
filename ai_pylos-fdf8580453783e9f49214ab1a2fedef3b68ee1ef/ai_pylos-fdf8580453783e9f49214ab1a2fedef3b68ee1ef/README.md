@@ -27,3 +27,11 @@ V2
 - Zelfde evaluator als V1
 - Pruning
 - Random zetten als score hetzelfde is.
+
+V3
+ - volledige nieuwe minimax met alfa beta pruning
+
+ V4
+ - zelfde als V3, werd gebruikt om nieuwe optimalisaties te testen, nog geen goede gevonden
+ - dingen getest: bonus bij winst of verlies, na 1 stap blokkeren/vullen vierkant
+ - OPMERKING: de pruning op lijn 116 doet hij precies nooit dus mss nog eens uitzoeken of werkt

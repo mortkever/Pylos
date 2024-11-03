@@ -7,10 +7,10 @@ import be.kuleuven.pylos.player.PylosPlayer;
 
 import be.kuleuven.pylos.player.Action.Action;
 import be.kuleuven.pylos.player.SearchTreev2;
+import be.kuleuven.pylos.player.SearchTreev5;
 
-public class StudentPlayerV2 extends PylosPlayer {
+public class StudentPlayerV5 extends PylosPlayer {
 
-	int depth = 4;
 
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {
@@ -32,9 +32,7 @@ public class StudentPlayerV2 extends PylosPlayer {
 
 	private Action getBestMove(PylosGameIF game, PylosBoard board) {
 		PylosGameSimulator simulator = new PylosGameSimulator(game.getState(), this.PLAYER_COLOR, board);
-
-		SearchTreev2 tree = new SearchTreev2(depth, 1, simulator, board, this, game, null, 1, Integer.MIN_VALUE,
-				Integer.MAX_VALUE, this.PLAYER_COLOR); // 6
+		SearchTreev5 tree = new SearchTreev5(1, simulator, board, this, game, null, Integer.MIN_VALUE, Integer.MAX_VALUE, true,  this.PLAYER_COLOR); // 6
 		Action action = tree.getBestAction(this);
 		return action;
 
