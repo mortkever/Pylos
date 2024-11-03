@@ -18,7 +18,7 @@ import java.util.Random;
 
 import be.kuleuven.pylos.player.Action.*;
 
-public class StudentPlayerv4 extends PylosPlayer {
+public class StudentPlayerV4 extends PylosPlayer {
 
     int depth = 7;
 

@@ -57,6 +57,12 @@ public class PlayerFactoryStudent extends PylosPlayerFactory {
 				return new StudentPlayerV3();
 			}
 		});
+		add(new PylosPlayerType("Student - V4") {
+			@Override
+			public PylosPlayer create() {
+				return new StudentPlayerV4();
+			}
+		});
 		add(new PylosPlayerType("Student - V5") {
 			@Override
 			public PylosPlayer create() {

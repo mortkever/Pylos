@@ -17,7 +17,7 @@ import be.kuleuven.pylos.player.student.StudentPlayerV1;
 import be.kuleuven.pylos.player.student.StudentPlayerV2;
 import be.kuleuven.pylos.player.student.StudentPlayerV5;
 import be.kuleuven.pylos.player.student.StudentPlayerV3;
-import be.kuleuven.pylos.player.student.StudentPlayerv4;
+import be.kuleuven.pylos.player.student.StudentPlayerV4;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,8 +55,8 @@ public class PylosMain {
         //PylosPlayer p1 = new StudentPlayerV2();//new PylosPlayerBestFit();
         PylosPlayer p1 = new StudentPlayerV5();
 
-        //PylosPlayer p2 = new StudentPlayerV3();
-        PylosPlayer p2 = new PylosPlayerMiniMax(4);
+        PylosPlayer p2 = new StudentPlayerV4();
+        //PylosPlayer p2 = new PylosPlayerMiniMax(4);
         //PylosPlayer p2 = new PylosPlayerRandomFit();
         //PylosPlayer p2 = new PylosPlayerBestFit();
         //PylosPlayer p2 = new PylosPlayerMiniMax(4); //new  PylosPlayerRandomFit();//
