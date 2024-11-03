@@ -25,5 +25,14 @@ V1
 V2
 
 - Zelfde evaluator als V1
-- Pruning
+- Pruning (deftig deze keer)
 - Random zetten als score hetzelfde is.
+
+V4
+
+- static simulator
+- Andere optimalisaties lijke nenkel te vertragen zoals dingen uit de pruning lus halen.
+
+Andere:
+
+- assertions scheelt ook +-5% tijd

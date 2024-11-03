@@ -15,6 +15,7 @@ import be.kuleuven.pylos.player.student.StudentPlayerNew;
 import be.kuleuven.pylos.player.student.StudentPlayerPrevious;
 import be.kuleuven.pylos.player.student.StudentPlayerV1;
 import be.kuleuven.pylos.player.student.StudentPlayerV2;
+import be.kuleuven.pylos.player.student.StudentPlayerv4;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,8 +47,8 @@ public class PylosMain {
     public static void startBattle() {
         int nRuns = 1000;
 
-        //PylosPlayer p1 = new StudentPlayerV1();//new PylosPlayerBestFit();
-        PylosPlayer p1 = new StudentPlayerV2();
+        //PylosPlayer p2 = new StudentPlayerV3();//new PylosPlayerBestFit();
+        PylosPlayer p1 = new StudentPlayerv4();
 
         //PylosPlayer p2 = new PylosPlayerRandomFit();
         PylosPlayer p2 = new PylosPlayerMiniMax(4); //new  PylosPlayerRandomFit();//
@@ -64,11 +65,11 @@ public class PylosMain {
         //as this is not ideal for use across multiple threads.
         //Use Collections.shuffle(List<?> list, Random random) instead, with the Random object from the player
 
-        int nRuns = 1000;
-        int nThreads = 8;
+        int nRuns = 100;
+        int nThreads = 3;
 
-        Class<? extends PylosPlayer> c1 = PylosPlayerBestFit.class;
-        Class<? extends PylosPlayer> c2 = PylosPlayerMiniMax2.class;
+        Class<? extends PylosPlayer> c1 = StudentPlayerV2.class;
+        Class<? extends PylosPlayer> c2 = PylosPlayerMiniMax4.class;
 
         BattleMT.play(c1, c2, nRuns, nThreads);
     }
