@@ -1,25 +1,80 @@
-package be.kuleuven.pylos.player;
+package be.kuleuven.pylos.player.student;
 
+import be.kuleuven.pylos.game.PylosBoard;
+import be.kuleuven.pylos.game.PylosGameIF;
+import be.kuleuven.pylos.game.PylosGameSimulator;
+import be.kuleuven.pylos.player.PylosPlayer;
+
+import be.kuleuven.pylos.player.Action.Action;
 import be.kuleuven.pylos.game.PylosLocation;
 import be.kuleuven.pylos.game.PylosPlayerColor;
 import be.kuleuven.pylos.game.PylosSphere;
 import be.kuleuven.pylos.game.PylosSquare;
-import be.kuleuven.pylos.game.PylosGameSimulator;
 import be.kuleuven.pylos.game.PylosGameState;
-import be.kuleuven.pylos.game.PylosGameIF;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
-import be.kuleuven.pylos.game.PylosBoard;
 import be.kuleuven.pylos.player.Action.*;
 
-public class SearchTreev2 {
+public class StudentPlayerv4 extends PylosPlayer {
+
+    int depth = 7;
+
+    @Override
+    public void doMove(PylosGameIF game, PylosBoard board) {
+        Action bestAction = getBestMove(game, board);
+        bestAction.execute(game);
+    }
+
+    @Override
+    public void doRemove(PylosGameIF game, PylosBoard board) {
+        Action bestAction = getBestMove(game, board);
+        bestAction.execute(game);
+    }
+
+    @Override
+    public void doRemoveOrPass(PylosGameIF game, PylosBoard board) {
+        Action bestAction = getBestMove(game, board);
+        bestAction.execute(game);
+    }
+
+    private Action getBestMove(PylosGameIF game, PylosBoard board) {
+        SearchTreev4.sim = new PylosGameSimulator(game.getState(), this.PLAYER_COLOR, board);
+
+        SearchTreev4 tree = new SearchTreev4(depth, 1, board, this, game, null, 1, Integer.MIN_VALUE,
+                Integer.MAX_VALUE, this.PLAYER_COLOR); // 6
+        Action action = tree.getBestAction(this.getRandom());
+        return action;
+
+    }
+}
+
+class EvaluatorV1 {
+    private static int EXCESS_RESERVE_SCORE = 1; // multiplier voor het aantal ballen meer dan de tegenstander
+
+    public static int evaluate(PylosBoard board, PylosPlayerColor playerColor) {
+        int score = 0;
+
+        // telt het aantal bollen in reserve meer dan de tegenstand
+        int difference = (board.getReservesSize(playerColor)
+                - board.getReservesSize(playerColor.other()));
+        score = difference * EXCESS_RESERVE_SCORE;
+
+        // als al winnaar bepaald?
+
+        return score;
+    }
+}
+
+class SearchTreev4 {
+    public static PylosGameSimulator sim;
     public Action action; // private
     private int score = 0;
-    public ArrayList<SearchTreev2> nodes; // private
+    public ArrayList<SearchTreev4> nodes; // private
 
-    public SearchTreev2(int layers, int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
+    public SearchTreev4(int layers, int currentLayer, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int minOfMax, int alfa, int beta, PylosPlayerColor playerColor) {
 
         // initialiseren van nodes (I)
@@ -36,33 +91,28 @@ public class SearchTreev2 {
             // for actie : possibleActie doe de actie en maak een nieuwe searchtree() aan
             // met currentlayer++ etc en stop ze in nodes
             // undo iedere keer ook de actie
-            int alfa_new = Integer.MIN_VALUE;
-            int beta_new = Integer.MAX_VALUE;
-
             if (minOfMax == 1) {
                 int value = Integer.MIN_VALUE;
                 for (Action action : possibleActions) {
                     // nieuwe simulator
-                    PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR,
-                            board);
-                    action.simulate(simulator);
+                    action.simulate(sim);
 
                     // toegevoegd dat player switcht
                     PylosPlayer p = player;
 
                     int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
                     // als volgende zet move is dan ben je gewisseld van speler denk ik
-                    if (simulator.getState() == PylosGameState.MOVE) {
+                    if (sim.getState() == PylosGameState.MOVE) {
                         p = player.OTHER;
                         minOfMax_new = minOfMax * (-1);
                     }
 
                     int next_layer = currentLayer + 1;
-                    SearchTreev2 tree = new SearchTreev2(layers, next_layer, simulator, board, p, game, action,
+                    SearchTreev4 tree = new SearchTreev4(layers, next_layer, board, p, game, action,
                             minOfMax_new, alfa, beta,
                             playerColor);
                     nodes.add(tree);
-                    action.undoSimulate(simulator);
+                    action.undoSimulate(sim);
 
                     value = Integer.max(value, tree.score);
                     if (value > beta) {
@@ -75,26 +125,24 @@ public class SearchTreev2 {
                 int value = Integer.MAX_VALUE;
                 for (Action action : possibleActions) {
                     // nieuwe simulator
-                    PylosGameSimulator simulator = new PylosGameSimulator(sim.getState(), player.PLAYER_COLOR,
-                            board);
-                    action.simulate(simulator);
+                    action.simulate(sim);
 
                     // toegevoegd dat player switcht
                     PylosPlayer p = player;
 
                     int minOfMax_new = minOfMax; // zodat min max niet al verandert is voor evalueren
                     // als volgende zet move is dan ben je gewisseld van speler denk ik
-                    if (simulator.getState() == PylosGameState.MOVE) {
+                    if (sim.getState() == PylosGameState.MOVE) {
                         p = player.OTHER;
                         minOfMax_new = minOfMax * (-1);
                     }
 
                     int next_layer = currentLayer + 1;
-                    SearchTreev2 tree = new SearchTreev2(layers, next_layer, simulator, board, p, game, action,
+                    SearchTreev4 tree = new SearchTreev4(layers, next_layer, board, p, game, action,
                             minOfMax_new, alfa, beta,
                             playerColor);
                     nodes.add(tree);
-                    action.undoSimulate(simulator);
+                    action.undoSimulate(sim);
 
                     value = Integer.min(value, tree.score);
                     if (value < alfa) {
@@ -125,23 +173,18 @@ public class SearchTreev2 {
         return score;
     }
 
-    public Action getBestAction(PylosPlayer player) {
-        if (nodes.size() == 0) {
-            System.out.println("info: " + action);
-            // TreeVisualizer.showTree(this);
-        }
+    public Action getBestAction(Random playerRandom) {
 
-        ArrayList<SearchTreev2> opties = new ArrayList<>();
-        for (SearchTreev2 s : nodes) {
+        ArrayList<SearchTreev4> opties = new ArrayList<>();
+        for (SearchTreev4 s : nodes) {
             if (s.getScore() == score) {
                 opties.add(s);
             }
         }
 
-        //randomizer voor als er meerdere acties zijn met dezelfde score.
-        assert(opties.size() != 0);
-        //tijdleijk in comment om beter te vergelijken, later terug eruit comment
-        //Collections.shuffle(opties, player.getRandom());
+        // randomizer voor als er meerdere acties zijn met dezelfde score.
+        assert (opties.size() != 0);
+        Collections.shuffle(opties, playerRandom);
         return opties.get(0).action;
     }
 

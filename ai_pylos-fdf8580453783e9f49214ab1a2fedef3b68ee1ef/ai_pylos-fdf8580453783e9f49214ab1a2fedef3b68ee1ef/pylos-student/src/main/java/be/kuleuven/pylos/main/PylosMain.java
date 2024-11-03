@@ -17,6 +17,7 @@ import be.kuleuven.pylos.player.student.StudentPlayerV1;
 import be.kuleuven.pylos.player.student.StudentPlayerV2;
 import be.kuleuven.pylos.player.student.StudentPlayerV5;
 import be.kuleuven.pylos.player.student.StudentPlayerV3;
+import be.kuleuven.pylos.player.student.StudentPlayerv4;
 
 import java.util.*;
 import java.util.stream.Collectors;
