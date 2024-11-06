@@ -16,7 +16,9 @@ import be.kuleuven.pylos.player.Action.*;
 import java.util.Random;
 
 public class StudentPlayer_VictorIndra extends PylosPlayer {
-
+    // ---------------------------------------------------------------------------------------
+    private int diepte = 9; //aantal lagen dat we diep kijken | 9: +-1.3s/game, 8: +-0.3s/game
+    // ---------------------------------------------------------------------------------------
 
 	@Override
 	public void doMove(PylosGameIF game, PylosBoard board) {
@@ -38,6 +40,7 @@ public class StudentPlayer_VictorIndra extends PylosPlayer {
 
 	private Action getBestMove(PylosGameIF game, PylosBoard board) {
 		PylosGameSimulator simulator = new PylosGameSimulator(game.getState(), this.PLAYER_COLOR, board);
+        SearchTree.MAX_DEPTH = diepte;
 		SearchTree tree = new SearchTree(1, simulator, board, this, game, null,Integer.MIN_VALUE, Integer.MAX_VALUE, true,  this.PLAYER_COLOR,this.getRandom()); // 6
 		Action action = tree.getBestAction(this.getRandom());
 
@@ -88,7 +91,7 @@ class SearchTree {
 
     Action bestAction = null;
 
-    private static final int MAX_DEPTH = 9; // diepte kan hier aanpassen: 8
+    public static int MAX_DEPTH = 9; // diepte kan hier aanpassen: 8
 
     public SearchTree(int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int alpha, int beta, boolean isMaximizingPlayer, PylosPlayerColor playerColor, Random playerRandom) {
