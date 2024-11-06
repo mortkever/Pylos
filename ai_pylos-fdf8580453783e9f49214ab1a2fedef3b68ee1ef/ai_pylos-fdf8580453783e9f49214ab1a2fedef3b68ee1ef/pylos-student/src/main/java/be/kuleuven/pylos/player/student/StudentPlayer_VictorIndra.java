@@ -15,7 +15,6 @@ import java.util.Collections;
 import be.kuleuven.pylos.player.Action.*;
 import java.util.Random;
 
-
 public class StudentPlayer_VictorIndra extends PylosPlayer {
 
 
@@ -39,7 +38,7 @@ public class StudentPlayer_VictorIndra extends PylosPlayer {
 
 	private Action getBestMove(PylosGameIF game, PylosBoard board) {
 		PylosGameSimulator simulator = new PylosGameSimulator(game.getState(), this.PLAYER_COLOR, board);
-		SearchTree tree = new SearchTree(1, simulator, board, this, game, null, Integer.MIN_VALUE, Integer.MAX_VALUE, true,  this.PLAYER_COLOR,this.getRandom()); // 6
+		SearchTree tree = new SearchTree(1, simulator, board, this, game, null,Integer.MIN_VALUE, Integer.MAX_VALUE, true,  this.PLAYER_COLOR,this.getRandom()); // 6
 		Action action = tree.getBestAction(this.getRandom());
 
 
@@ -86,14 +85,10 @@ class SearchTree {
     public Action action; // private
     private int score = 0;
     public ArrayList<SearchTree> nodes; // private
-    // alfa: beste keuze tot nu toe voor max player
-    public int alfa = Integer.MIN_VALUE;
-    // beta: beste keuze tot nu to voor MIN player
-    public int beta = Integer.MAX_VALUE;
 
     Action bestAction = null;
 
-    private static final int MAX_DEPTH = 8; // diepte kan hier aanpassen: 8
+    private static final int MAX_DEPTH = 9; // diepte kan hier aanpassen: 8
 
     public SearchTree(int currentLayer, PylosGameSimulator sim, PylosBoard board, PylosPlayer player,
             PylosGameIF game, Action a, int alpha, int beta, boolean isMaximizingPlayer, PylosPlayerColor playerColor, Random playerRandom) {
@@ -127,7 +122,7 @@ class SearchTree {
                         int next_layer = currentLayer + 1;
 
                         // Recursie
-                        SearchTree tree = new SearchTree(next_layer, sim, board, p, game, action, alfa, beta,
+                        SearchTree tree = new SearchTree(next_layer, sim, board, p, game, action, alpha, beta,
                                 isMaximizingPlayer_new, playerColor, playerRandom);
                         int eval = tree.getScore();
                         nodes.add(tree);
@@ -141,7 +136,7 @@ class SearchTree {
                         alpha = Math.max(alpha, eval);
                         action.undoSimulate(sim);
 
-                        if (beta <= alpha) {
+                        if (beta <= eval) {
                             
                             nodes.clear();
                             break; // Beta cut-off
@@ -167,7 +162,7 @@ class SearchTree {
                         int next_layer = currentLayer + 1;
 
                         // Recursive call
-                        SearchTree tree = new SearchTree(next_layer, sim, board, p, game, action, alfa, beta,
+                        SearchTree tree = new SearchTree(next_layer, sim, board, p, game, action, alpha, beta,
                                 isMaximizingPlayer_new, playerColor, playerRandom);
                         int eval = tree.getScore();
                         nodes.add(tree);
@@ -180,12 +175,11 @@ class SearchTree {
 
                         beta = Math.min(beta, eval);
                         action.undoSimulate(sim);
-                        if (beta <= alpha) {
-                            
+
+                        if (eval < alpha) {
                             nodes.clear();
                             break; // Alpha cut-off
                         }
-
                     }
 
                 }
