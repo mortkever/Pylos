@@ -69,5 +69,11 @@ public class PlayerFactoryStudent extends PylosPlayerFactory {
 				return new StudentPlayerV5();
 			}
 		});
+		add(new PylosPlayerType("Student - VictorIndra") {
+			@Override
+			public PylosPlayer create() {
+				return new StudentPlayer_VictorIndra();
+			}
+		});
 	}
 }

@@ -18,6 +18,7 @@ import be.kuleuven.pylos.player.student.StudentPlayerV2;
 import be.kuleuven.pylos.player.student.StudentPlayerV5;
 import be.kuleuven.pylos.player.student.StudentPlayerV3;
 import be.kuleuven.pylos.player.student.StudentPlayerV4;
+import be.kuleuven.pylos.player.student.StudentPlayer_VictorIndra;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,8 +29,8 @@ public class PylosMain {
         /* !!! jvm argument !!! -ea */
 
         //startSingleGame();
-        startBattle();
-        //startBattleMultithreaded();
+        //startBattle();
+        startBattleMultithreaded();
         //startRoundRobinTournament();
     }
 
@@ -53,9 +54,9 @@ public class PylosMain {
         int nRuns = 100;
 
         //PylosPlayer p1 = new StudentPlayerV2();//new PylosPlayerBestFit();
-        PylosPlayer p1 = new StudentPlayerV5();
+        PylosPlayer p1 = new StudentPlayer_VictorIndra();
 
-        PylosPlayer p2 = new StudentPlayerV4();
+        PylosPlayer p2 = new StudentPlayerV5();
         //PylosPlayer p2 = new PylosPlayerMiniMax(4);
         //PylosPlayer p2 = new PylosPlayerRandomFit();
         //PylosPlayer p2 = new PylosPlayerBestFit();
@@ -76,7 +77,7 @@ public class PylosMain {
         int nRuns = 1000;//1000;
         int nThreads = 8; //8
 
-        Class<? extends PylosPlayer> c1 = StudentPlayerV5.class;
+        Class<? extends PylosPlayer> c1 = StudentPlayer_VictorIndra.class;
         //Class<? extends PylosPlayer> c1 = PylosPlayerBestFit.class;
         Class<? extends PylosPlayer> c2 = PylosPlayerMiniMax4.class;
 
@@ -92,6 +93,8 @@ public class PylosMain {
         players.add(PylosPlayerBestFit.class);
         players.add(PylosPlayerMiniMax2.class);
         players.add(PylosPlayerMiniMax4.class);
+        players.add(StudentPlayerV5.class);
+        players.add(StudentPlayer_VictorIndra.class);
 
         int nRunsPerCombination = 1000;
         int nThreads = 8;

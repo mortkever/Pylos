@@ -1,0 +1,26 @@
+Starting round robin tournament: 15 games of 1000 runs across 8 threads
+        1: PylosPlayerRandomFit vs. PylosPlayerMiniMax2
+        2: PylosPlayerBestFit vs. PylosPlayerMiniMax2
+        3: PylosPlayerMiniMax2 vs. StudentPlayerV5
+        4: PylosPlayerRandomFit vs. StudentPlayerV5
+        5: PylosPlayerRandomFit vs. PylosPlayerBestFit
+        6: PylosPlayerMiniMax2 vs. PylosPlayerMiniMax4
+        7: PylosPlayerBestFit vs. StudentPlayerV5
+        8: PylosPlayerRandomFit vs. PylosPlayerMiniMax4
+        9: PylosPlayerMiniMax4 vs. StudentPlayerV5
+        10: PylosPlayerBestFit vs. PylosPlayerMiniMax4
+        11: PylosPlayerMiniMax2 vs. StudentPlayer_VictorIndra
+        12: PylosPlayerRandomFit vs. StudentPlayer_VictorIndra
+        13: StudentPlayerV5 vs. StudentPlayer_VictorIndra
+        14: PylosPlayerBestFit vs. StudentPlayer_VictorIndra
+        15: PylosPlayerMiniMax4 vs. StudentPlayer_VictorIndra
+tournament finished in 3017834 ms
+
+tournament results:
+                               PylosPlayerRandomFit    PylosPlayerBestFit      PylosPlayerMiniMax2     PylosPlayerMiniMax4     StudentPlayerV5 StudentPlayer_VictorIndra
+PylosPlayerRandomFit                                           5                        0                       2                    0                      0
+PylosPlayerBestFit                     992                                             620                      25                   65                     55
+PylosPlayerMiniMax2                    870                    372                                               59                   14                     20
+PylosPlayerMiniMax4                    965                    975                      679                                           257                    232
+StudentPlayerV5                        986                    934                      952                      739                                         503
+StudentPlayer_VictorIndra              989                    944     		       929                      762                  495

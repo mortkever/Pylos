@@ -42,6 +42,9 @@ V4
  - dingen getest: bonus bij winst of verlies, na 1 stap blokkeren/vullen vierkant
  - OPMERKING: de pruning op lijn 116 doet hij precies nooit dus mss nog eens uitzoeken of werkt
 
+V6 = StudentPlayer_VictorIndra
+- speler om in te dienen, kunnen nog aanpassingen aan gedaan worden
+ - alles in 1 file gezet, alle namen met v (version) eruit gehaald
 Andere:
 
 - assertions scheelt ook +-5% tijd
