@@ -9,7 +9,7 @@
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -17,7 +17,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.battle.BattleMain",
             "projectName": "pylos-core",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -25,7 +25,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.battle.RoundRobinMain",
             "projectName": "pylos-core",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -33,7 +33,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.player.codes.PylosPlayerMiniMax",
             "projectName": "pylos-core",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -41,7 +41,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.gui.PylosGuiMain",
             "projectName": "pylos-gui",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -49,7 +49,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.testbattle.TestMain",
             "projectName": "pylos-gui",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         },
         {
             "type": "java",
@@ -57,7 +57,7 @@
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.main.PylosMain",
             "projectName": "pylos-student",
-            "vmArgs": "-enableassertions"
+            //"vmArgs": "-enableassertions"
         }
     ]
 }
