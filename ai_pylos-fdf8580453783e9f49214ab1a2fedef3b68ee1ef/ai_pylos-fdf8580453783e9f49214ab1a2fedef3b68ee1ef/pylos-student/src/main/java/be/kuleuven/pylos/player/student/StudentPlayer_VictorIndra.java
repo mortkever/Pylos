@@ -4,7 +4,6 @@ import be.kuleuven.pylos.game.PylosBoard;
 import be.kuleuven.pylos.game.PylosGameIF;
 import be.kuleuven.pylos.game.PylosGameSimulator;
 import be.kuleuven.pylos.player.PylosPlayer;
-import be.kuleuven.pylos.player.Action.Action;
 import be.kuleuven.pylos.game.PylosPlayerColor;
 import be.kuleuven.pylos.game.PylosLocation;
 import be.kuleuven.pylos.game.PylosSphere;
@@ -12,7 +11,6 @@ import be.kuleuven.pylos.game.PylosSquare;
 import be.kuleuven.pylos.game.PylosGameState;
 import java.util.ArrayList;
 import java.util.Collections;
-import be.kuleuven.pylos.player.Action.*;
 import java.util.Random;
 
 public class StudentPlayer_VictorIndra extends PylosPlayer {
@@ -56,8 +54,6 @@ public class StudentPlayer_VictorIndra extends PylosPlayer {
 
 class Evaluator {
 	private static int EXCESS_RESERVE_SCORE = 10; // multiplier voor het aantal ballen meer dan de tegenstander
-	private static int WIN_BONUS = 5;
-	private static int LOSE_PENALTY = -5;
 
 	public static int evaluate(PylosBoard board, PylosPlayerColor playerColor) {
 		int score = 0;
@@ -66,15 +62,7 @@ class Evaluator {
 		// telt het aantal bollen in reserve meer dan de tegenstand
 		int difference = reserveOwn - reserveOther;
 		score = difference * EXCESS_RESERVE_SCORE;
-
-		// als al winnaar bepaald?
-		//maakt weinig verschil als daar bonus voor geeft of penalty
-		// if(reserveOwn == 0){
-		// 	score += WIN_BONUS;
-		// }
-		// else if(reserveOther == 0){
-		// 	score -= LOSE_PENALTY;
-		// }
+        
 		return score;
 	}
 
@@ -196,8 +184,6 @@ class SearchTree {
     }
 
     public Action getBestAction(Random playerRandom) {
-        //kan wrs ook gebruik maken van bestAction rechtstreeks => nog testen
-
         // TreeVisualizer.showTree(this);
         if (nodes.size() == 0) {
             System.out.println("info: " + action);
@@ -282,4 +268,83 @@ class SearchTree {
         return possibleActions;
     }
 
+}
+
+class Action {
+    ActionType TYPE;
+    PylosSphere SPHERE;
+    PylosLocation TO;
+    PylosLocation FROM;
+  
+    PylosGameState prevState;
+    PylosPlayerColor prevColor;
+  
+    // ...
+  
+    public Action(PylosSphere sphere, PylosLocation to, PylosLocation from, ActionType type) {
+      this.SPHERE = sphere;
+      this.TO = to;
+      this.FROM = from;
+      this.TYPE = type;
+    }
+  
+    public void execute(PylosGameIF game) {
+      if (TYPE == ActionType.MOVE) {
+        game.moveSphere(SPHERE, TO);
+      } else if (TYPE == ActionType.REMOVE) {
+        game.removeSphere(SPHERE);
+      } else if (TYPE == ActionType.PASS) {
+        game.pass();
+      }
+    }
+  
+    public void simulate(PylosGameSimulator sim) {
+      prevState = sim.getState();
+      prevColor = sim.getColor();
+      if (TYPE == ActionType.MOVE) {
+        sim.moveSphere(SPHERE, TO);
+      } else if (TYPE == ActionType.REMOVE) {
+        sim.removeSphere(SPHERE);
+      } else if (TYPE == ActionType.PASS) {
+        sim.pass();
+      }
+    }
+  
+    public void undoSimulate(PylosGameSimulator sim) {
+      if (TYPE == ActionType.MOVE) {
+        if (this.FROM != null && prevState == PylosGameState.MOVE) {
+          sim.undoMoveSphere(this.SPHERE, this.FROM, this.prevState, prevColor); //this.SPHERE.PLAYER_COLOR
+        } else if (this.FROM == null) {
+          sim.undoAddSphere(SPHERE, this.prevState, prevColor); //this.SPHERE.PLAYER_COLOR
+        } else {
+          assert false;
+        }
+      } else if (TYPE == ActionType.REMOVE) {
+        if (prevState == PylosGameState.REMOVE_FIRST) {
+          sim.undoRemoveFirstSphere(SPHERE, FROM, prevState,  prevColor); //this.SPHERE.PLAYER_COLOR
+        } else if (prevState == PylosGameState.REMOVE_SECOND) {
+          sim.undoRemoveSecondSphere(SPHERE, FROM, prevState,  prevColor); //this.SPHERE.PLAYER_COLOR
+        } else {
+          assert false;
+        }
+      } else if (TYPE == ActionType.PASS) {
+        sim.undoPass(prevState, prevColor ); //this.SPHERE.PLAYER_COLOR -> nodig omdat undoPass geen sphere heeft om op te vragen
+      } else {
+        assert false;
+      }
+    }
+  
+    //tijdelijk
+    public ActionType getType(){
+      return TYPE;
+    }
+    public PylosLocation getTo(){
+      return TO;
+    }
+  }
+
+  enum ActionType {
+    MOVE,
+    REMOVE,
+    PASS;
 }
