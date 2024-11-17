@@ -14,8 +14,9 @@ import java.util.Map;
 
 public class PylosMLTest {
 
-    public final static String MODEL_PATH = "pylos-ml/src/main/training/resources/models/latest";
-
+    //public final static String MODEL_PATH = "pylos-ml/src/main/training/resources/models/latest";
+    public final static String MODEL_PATH = "resources\\models\\latest";
+    
     public static void main(String[] args) throws Exception {
 
         try (SavedModelBundle model = SavedModelBundle.load(MODEL_PATH, "serve")) {
@@ -32,7 +33,7 @@ public class PylosMLTest {
             PylosPlayerType opp = new PylosPlayerType("MM2") {
                 @Override
                 public PylosPlayer create() {
-                    return new PylosPlayerMiniMax(2);
+                    return new PylosPlayerMiniMax(3);
                 }
             };
 

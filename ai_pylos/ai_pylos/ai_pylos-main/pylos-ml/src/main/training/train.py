@@ -5,7 +5,9 @@ import numpy as np
 import datetime
 import os
 
-DATASET_PATH = "resources/games/0.json"
+ #DATASET_PATH = "resources/games/0.json"
+DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
+#MODEL_EXPORT_PATH = "resources/models/"
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98

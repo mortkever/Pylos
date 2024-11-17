@@ -7,6 +7,8 @@ import be.kuleuven.pylos.player.PylosPlayer;
 import be.kuleuven.pylos.player.PylosPlayerType;
 import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
+import be.kuleuven.pylos.player.student.StudentPlayer_VictorIndra;
+
 import com.google.gson.*;
 
 import java.io.File;
@@ -14,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.ArrayList;
 
 
 public class PylosMLCollect {
@@ -40,22 +43,46 @@ public class PylosMLCollect {
     }
 
     public static List<PlayedGame> collectGames() {
+        ArrayList<PylosPlayerType> players =new ArrayList<>();
+        ArrayList<PlayedGame> playedGames = new ArrayList<>();
+
         PylosPlayerType p1 = new PylosPlayerType("BF") {
             @Override
             public PylosPlayer create() {
                 return new PylosPlayerBestFit();
             }
         };
+        players.add(0,p1);
+
         PylosPlayerType p2 = new PylosPlayerType("MM2") {
             @Override
             public PylosPlayer create() {
                 return new PylosPlayerMiniMax(2);
             }
         };
+        players.add(1,p2);
 
-        BattleResult br = BattleMT.play(p1, p2, 100000, 8, true);
+        PylosPlayerType p3 = new PylosPlayerType("StudentPlayer_VictorIndra") {
+            @Override
+            public PylosPlayer create() {
+                return new StudentPlayer_VictorIndra();
+            }
+        };
+        players.add(2,p3);
 
-        return br.playedGames;
+        for(int i = 0; i<players.size();i++){
+            for(int j = 0; j<players.size();j++){
+                BattleResult br = BattleMT.play(players.get(i), players.get(j), 100000, 8, true); //100000
+                playedGames.addAll(br.playedGames);
+            }
+           
+        }
+
+        
+
+        
+        
+        return playedGames;
     }
 }
 
