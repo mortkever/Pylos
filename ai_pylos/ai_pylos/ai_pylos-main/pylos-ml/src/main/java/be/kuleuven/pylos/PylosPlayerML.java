@@ -8,6 +8,7 @@ import org.tensorflow.ndarray.StdArrays;
 import org.tensorflow.types.TFloat32;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PylosPlayerML extends PylosPlayer {
@@ -35,31 +36,38 @@ public class PylosPlayerML extends PylosPlayer {
         bestAction.execute(game);
     }
 
-    // First iteration of minimax function which returns an action instead of a score
+    // First iteration of minimax function which returns an action instead of a
+    // score
     private Action bestAction(PylosBoard board, PylosPlayerColor color, PylosGameState state) {
         List<Action> actions = generateActions(board, color, state);
         PylosGameSimulator simulator = new PylosGameSimulator(state, color, board);
 
-        Action bestAction = null;
         float bestEval = Float.NEGATIVE_INFINITY;
+        ArrayList<Action> bestActions = new ArrayList<>();
         for (Action action : actions) {
             action.simulate(simulator);
             float eval = evalBoard(board, color);
             action.reverseSimulate(simulator);
             if (eval > bestEval) {
                 bestEval = eval;
-                bestAction = action;
+                bestActions.clear();
+                bestActions.add(action);
+            } else if (eval == bestEval) {
+                System.out.println(eval);
+                bestActions.add(action);
             }
         }
 
-        return bestAction;
+        Collections.shuffle(bestActions, this.getRandom());
+
+        return bestActions.get(0);
     }
 
     // Returns a value which we try to maximise and our opponent tries to minimize.
     private float evalBoard(PylosBoard board, PylosPlayerColor color) {
         long boardAsLong = board.toLong();
 
-        //convert board to array of bits
+        // convert board to array of bits
         float[] boardAsArray = new float[60];
         for (int i = 0; i < 60; i++) {
             int leftShifts = 59 - i;
@@ -68,12 +76,12 @@ public class PylosPlayerML extends PylosPlayer {
         }
 
         float output = Float.NaN;
-        try(Tensor inputTensor = TFloat32.tensorOf(StdArrays.ndCopyOf(new float[][]{boardAsArray}))) {
-            try(TFloat32 outputTensor = (TFloat32) model.session().runner()
+        try (Tensor inputTensor = TFloat32.tensorOf(StdArrays.ndCopyOf(new float[][] { boardAsArray }))) {
+            try (TFloat32 outputTensor = (TFloat32) model.session().runner()
                     .feed("serving_default_keras_tensor:0", inputTensor)
                     .fetch("StatefulPartitionedCall_1:0")
-                    .run().get(0)){
-            output = outputTensor.getFloat();
+                    .run().get(0)) {
+                output = outputTensor.getFloat();
             }
         }
 
@@ -127,7 +135,6 @@ public class PylosPlayerML extends PylosPlayer {
         return actions;
     }
 
-
     enum ActionType {
         ADD,
         MOVE,
@@ -154,13 +161,13 @@ public class PylosPlayerML extends PylosPlayer {
         public void execute(PylosGameIF game) {
             switch (type) {
                 case ADD, MOVE ->
-                        game.moveSphere(sphere, location);
+                    game.moveSphere(sphere, location);
                 case REMOVE_FIRST, REMOVE_SECOND ->
-                        game.removeSphere(sphere);
+                    game.removeSphere(sphere);
                 case PASS ->
-                        game.pass();
+                    game.pass();
                 default ->
-                        throw new IllegalStateException("type not found in switch");
+                    throw new IllegalStateException("type not found in switch");
             }
         }
 
@@ -203,4 +210,3 @@ public class PylosPlayerML extends PylosPlayer {
         }
     }
 }
-

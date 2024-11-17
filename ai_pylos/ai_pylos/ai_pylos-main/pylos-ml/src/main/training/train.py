@@ -6,12 +6,13 @@ import datetime
 import os
 
  #DATASET_PATH = "resources/games/0.json"
-DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
+#DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 #MODEL_EXPORT_PATH = "resources/models/"
+DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 10
+EPOCHS = 100
 BATCH_SIZE = 1024
 N_CORES = 8
 
@@ -46,6 +47,9 @@ def build_model():
 
     # 3 dense layers
     x = layers.Dense(128, activation='relu')(inputs)
+    x = layers.Dense(64, activation='relu')(x)
+    x = layers.Dense(64, activation='relu')(x)
+    x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
 
