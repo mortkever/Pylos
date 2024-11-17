@@ -15,12 +15,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class PylosMLCollect {
-    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/0.json";
+    public static String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/"+timestamp+".json"; //0
+    //public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/test_set.json";
 
     public static void main(String[] args) throws IOException {
         // Collect games

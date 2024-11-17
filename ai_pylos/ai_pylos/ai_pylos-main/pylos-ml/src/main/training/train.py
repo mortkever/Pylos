@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, models
 import json
@@ -35,11 +36,14 @@ def main():
     print("boards:", boards)
     print("scores:", scores)
 
-    model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
+    history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
 
     # Save the model as SavedModel, with date and time as the name
     model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     model.export(MODEL_EXPORT_PATH + "latest")
+
+    plot_training_history_loss(history)
+    plot_training_history_mae(history)
 
 def build_model():
     # The input should be a 1D array of 60 floats (-1, 0, 1)
@@ -91,6 +95,31 @@ def build_dataset(path):
 
     return np.array(boards, dtype=np.float32), np.array(scores, dtype=np.float32)
 
+def plot_training_history_loss(history):
+    epochs = range(1, len(history.history['loss']) + 1)
+
+    # Plot loss
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, history.history['loss'], label='Training Loss')
+    plt.title('Training Loss Over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+def plot_training_history_mae(history):
+    epochs = range(1, len(history.history['mae']) + 1)
+
+    # Plot mae
+    plt.figure(figsize=(10, 6))
+    plt.plot(epochs, history.history['mae'], label='Training mae')
+    plt.title('Training mae Over Epochs')
+    plt.xlabel('Epochs')
+    plt.ylabel('mae')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
 
 if __name__ == "__main__":
     main()
