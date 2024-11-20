@@ -19,38 +19,39 @@ public class PylosMLTest {
     //MODEL AANPASSEN NAAR DEZE DAT JE WIL GEBRUIKEN!!!!!
     
     public final static String MODEL_PATH = "resources\\models\\20241107-1015";
-    public final static String MODEL_PATH_2 = "resources\\models\\20241117-1715"; // latest
+    public final static String MODEL_PATH_2 = "resources\\models\\reinforce"; // latest
+    
 
     public static void main(String[] args) throws Exception {
 
         try (SavedModelBundle model = SavedModelBundle.load(MODEL_PATH, "serve")) {
             try (SavedModelBundle model2 = SavedModelBundle.load(MODEL_PATH_2, "serve")) {
                 System.out.println("Model loaded");
-                printModelSignature(model);
+                printModelSignature(model2);
 
                 PylosPlayerType trainedPlayer = new PylosPlayerType("ML") {
-                    @Override
-                    public PylosPlayer create() {
-                        return new PylosPlayerML(model);
-                    }
-                };
-
-                //tegen een oudere versie van ml spelen
-                PylosPlayerType trainedPlayer2 = new PylosPlayerType("ML2") {
                     @Override
                     public PylosPlayer create() {
                         return new PylosPlayerML(model2);
                     }
                 };
-                // PylosPlayerType opp = new PylosPlayerType("MM2") {
+
+                //tegen een oudere versie van ml spelen
+                // PylosPlayerType trainedPlayer2 = new PylosPlayerType("ML2") {
                 //     @Override
                 //     public PylosPlayer create() {
-                //         return new PylosPlayerMiniMax(3);
+                //         return new PylosPlayerML(model2);
                 //     }
                 // };
+                PylosPlayerType opp = new PylosPlayerType("MM3") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(3);
+                    }
+                };
 
-                BattleMT.play(trainedPlayer, trainedPlayer2, 1000, 8);
-                //BattleMT.play(trainedPlayer, opp, 1000, 8);
+                //BattleMT.play(trainedPlayer, trainedPlayer2, 1000, 8);
+                BattleMT.play(trainedPlayer, opp, 1000, 8);
             }
 
         }

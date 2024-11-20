@@ -16,13 +16,15 @@ import os
  #DATASET_PATH = "resources/games/0.json"
 #DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 #MODEL_EXPORT_PATH = "resources/models/"
+
+#DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
 DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
-TESTSET_PATH = "pylos-ml/src/main/training/resources/games/test_set.json"
+TESTSET_PATH = "pylos-ml/src/main/training/resources/games/20241120172125.json"
 
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 50 #10
+EPOCHS = 2#0 #50 #na 20 amper verbeteringen in huidig model
 BATCH_SIZE = 1024
 N_CORES = 8
 
@@ -34,7 +36,7 @@ def main():
     print("TensorFlow version:", tf.__version__)
 
     #model = build_model()
-    model = build_resnet_model()
+    model = build_model()
 
     #model.compile(optimizer='adam', loss='mean_squared_error')
     model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
@@ -48,7 +50,7 @@ def main():
     print("scores:", scores)
 
     history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
-
+    
     #test set
     boards_test, scores_test = build_dataset(TESTSET_PATH)
     test_results = model.evaluate(boards_test, scores_test, verbose=1)
@@ -57,6 +59,10 @@ def main():
     # Save the model as SavedModel, with date and time as the name
     model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     model.export(MODEL_EXPORT_PATH + "latest")
+    model.export(MODEL_EXPORT_PATH + "reinforce")
+    model.export(MODEL_EXPORT_PATH + "reinforce_old")
+
+    model.save(MODEL_EXPORT_PATH+"model.h5")
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M")
     plot_training_history_loss(history, timestamp)
@@ -77,50 +83,10 @@ def build_model():
 
     # Build the model
     model = models.Model(inputs=inputs, outputs=outputs)
+
     return model
 
 
-def build_resnet_model():
-    inputs = layers.Input(shape=(60, 1))
-
-    # initiële convolution layers
-    x = layers.Conv1D(64, kernel_size=3, padding='same', kernel_initializer='he_normal')(inputs)
-    # x = layers.BatchNormalization()(x)
-    x = layers.Activation('relu')(x)
-
-    # resnet blocks: 3
-    for _ in range(3):  
-        x = resnet_block(x, num_filters=64)
-
-    #x = layers.GlobalAveragePooling1D()(x)
-
-    #ev nog die drie dense layers
-    x = layers.Dense(128, activation='relu')(inputs)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(32, activation='relu')(x)
-
-    outputs = layers.Dense(1)(x)  # zorgen 1 output voor regression
-
-    return models.Model(inputs, outputs)
-
-def resnet_block(x, num_filters, kernel_size=3, strides=1, activation='relu'):
-    shortcut = x
-
-    # eerste convolutie
-    x = layers.Conv1D(num_filters, kernel_size, strides=strides, padding='same',
-                      kernel_initializer='he_normal', kernel_regularizer=l2(1e-4))(x)
-    #x = layers.BatchNormalization()(x)
-    x = layers.Activation(activation)(x)
-
-    x = layers.Dense(64, activation='relu')(x)
-    #tweede convolutie
-    #x = layers.Conv1D(num_filters, kernel_size, strides=1, padding='same',kernel_initializer='he_normal', kernel_regularizer=l2(1e-4))(x)
-    #x = layers.BatchNormalization()(x)
-
-    #skip connectie toevoegen
-    x = layers.Add()([x, shortcut])
-    x = layers.Activation(activation)(x)
-    return x
 
 
 

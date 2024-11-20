@@ -74,14 +74,26 @@ public class PylosMLCollect {
         };
         players.add(2,p3);
 
-        for(int i = 0; i<players.size();i++){
-            for(int j = 0; j<players.size();j++){
-                BattleResult br = BattleMT.play(players.get(i), players.get(j), 100000, 8, true); //100000
-                playedGames.addAll(br.playedGames);
+        PylosPlayerType p4 = new PylosPlayerType("MM4") {
+            @Override
+            public PylosPlayer create() {
+                return new PylosPlayerMiniMax(5);
             }
-           
-        }
+        };
+        players.add(2,p4);
 
+        // for(int i = 0; i<players.size();i++){
+        //     for(int j = 0; j<players.size();j++){
+        //         BattleResult br = BattleMT.play(players.get(i), players.get(j), 100000, 8, true); //100000
+        //         playedGames.addAll(br.playedGames);
+        //     }
+           
+        // }
+
+        //test new resources
+            BattleResult br = BattleMT.play(p3, p4, 100000, 8, true); //100000
+            playedGames.addAll(br.playedGames);
+        
         
 
         

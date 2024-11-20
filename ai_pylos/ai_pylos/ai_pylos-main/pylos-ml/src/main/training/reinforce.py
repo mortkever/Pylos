@@ -1,19 +1,23 @@
 from matplotlib import pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, models
+from tensorflow.keras.regularizers import l2
+from keras.models import load_model
+from tensorflow.keras.optimizers import Adam
 import json
 import numpy as np
 import datetime
 import os
 
- #DATASET_PATH = "resources/games/0.json"
-#DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
-#MODEL_EXPORT_PATH = "resources/models/"
-DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
+
+DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json"
+MODEL_PATH = "resources/models/model.h5" #
+EXPORT_PATH = "resources/models/"
+
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 100
+EPOCHS =2 # 10 #50 #na 20 amper verbeteringen in huidig model
 BATCH_SIZE = 1024
 N_CORES = 8
 
@@ -24,9 +28,15 @@ os.environ["TF_NUM_INTEROP_THREADS"] = str(N_CORES)
 def main():
     print("TensorFlow version:", tf.__version__)
 
-    model = build_model()
+    #model = build_model()
+    #https://www.tensorflow.org/tutorials/keras/save_and_load
+    model = load_model(MODEL_PATH)
+    model.export(EXPORT_PATH+"reinforce_old")
+    
+    # Re-compile the model with the new optimizer
 
-    model.compile(optimizer='adam', loss='mean_squared_error')
+    #model.compile(optimizer='adam', loss='mean_squared_error')
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
 
     boards, scores = build_dataset(DATASET_PATH)
 
@@ -36,15 +46,14 @@ def main():
     print("boards:", boards)
     print("scores:", scores)
 
-    history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
-
-    # Save the model as SavedModel, with date and time as the name
-    model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    #https://machinelearningmastery.com/update-neural-network-models-with-more-data/
+    model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
     
-    model.export(MODEL_EXPORT_PATH + "latest")
+    model.export(EXPORT_PATH + "reinforce")
+    model.save(MODEL_PATH)
+    print("Model saved to", MODEL_EXPORT_PATH)
 
-    plot_training_history_loss(history)
-    plot_training_history_mae(history)
+    
 
 def build_model():
     # The input should be a 1D array of 60 floats (-1, 0, 1)
@@ -52,9 +61,6 @@ def build_model():
 
     # 3 dense layers
     x = layers.Dense(128, activation='relu')(inputs)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
 
@@ -64,6 +70,10 @@ def build_model():
     # Build the model
     model = models.Model(inputs=inputs, outputs=outputs)
     return model
+
+
+
+
 
 def build_dataset(path):
     # Load and prepare the dataset of Pylos Games from the JSON file in the data folder
@@ -96,10 +106,9 @@ def build_dataset(path):
 
     return np.array(boards, dtype=np.float32), np.array(scores, dtype=np.float32)
 
-def plot_training_history_loss(history):
+def plot_training_history_loss(history, timestamp):
     epochs = range(1, len(history.history['loss']) + 1)
 
-    # Plot loss
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, history.history['loss'], label='Training Loss')
     plt.title('Training Loss Over Epochs')
@@ -107,20 +116,47 @@ def plot_training_history_loss(history):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    plt.show()
 
-def plot_training_history_mae(history):
+    plt.savefig('graphs/training_loss'+timestamp+'.png')
+    print("Training loss plot saved as 'training_loss timestamp.png'")
+
+def plot_training_history_mae(history, timestamp):
     epochs = range(1, len(history.history['mae']) + 1)
 
-    # Plot mae
     plt.figure(figsize=(10, 6))
-    plt.plot(epochs, history.history['mae'], label='Training mae')
-    plt.title('Training mae Over Epochs')
+    plt.plot(epochs, history.history['mae'], label='Training Mae')
+    plt.title('Training Mae Over Epochs')
     plt.xlabel('Epochs')
     plt.ylabel('mae')
     plt.legend()
     plt.grid(True)
-    plt.show()
+    plt.savefig('graphs/training_mae'+timestamp+'.png')
+    print("Training loss plot saved as 'training_mae timestamp.png'")
+
+
+def plot_training_vs_test(history, test_results, timestamp):
+    epochs = range(1, len(history.history['loss']) + 1)
+
+    # Plot loss
+    plt.figure(figsize=(12, 6))
+    plt.plot(epochs, history.history['loss'], label='Training Loss', color='blue')
+    plt.axhline(y=test_results[0], color='blue', linestyle='--', label='Test Loss')
+    
+    # Plot MAE
+    plt.plot(epochs, history.history['mae'], label='Training MAE', color='green')
+    plt.axhline(y=test_results[1], color='green', linestyle='--', label='Test MAE')
+
+    plt.title('Training vs Test Metrics')
+    plt.xlabel('Epochs')
+    plt.ylabel('Metric Value')
+    plt.legend()
+    plt.grid(True)
+
+    
+    graph_path = f'graphs/metrics_comparison_{timestamp}.png'
+    plt.savefig(graph_path)
+    print(f"Training vs Test metrics plot saved as '{graph_path}'")
+
 
 if __name__ == "__main__":
     main()
