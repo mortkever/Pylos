@@ -2,11 +2,8 @@ package be.kuleuven.pylos;
 
 import java.util.List;
 
-import javax.swing.Action;
-
 import org.tensorflow.SavedModelBundle;
 
-import be.kuleuven.pylos.PylosPlayerML;
 import be.kuleuven.pylos.battle.BattleMT;
 import be.kuleuven.pylos.battle.BattleResult;
 import be.kuleuven.pylos.battle.data.PlayedGame;
@@ -36,7 +33,7 @@ public class PylosMLReinforcementTrainer {
 
     public static void main(String[] args) throws Exception {
         //SavedModelBundle newModel;
-
+        System.out.println("test 1");
         try (SavedModelBundle model = SavedModelBundle.load(MODEL_PATH, "serve")) {
             try (SavedModelBundle model2 = SavedModelBundle.load(MODEL_PATH_2, "serve")) {
                 System.out.println("Model loaded");
@@ -88,6 +85,6 @@ public class PylosMLReinforcementTrainer {
             }
 
         }
-    }
+     }
 
 }

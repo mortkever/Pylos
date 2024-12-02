@@ -19,13 +19,12 @@ public class PylosMLTest {
     //MODEL AANPASSEN NAAR DEZE DAT JE WIL GEBRUIKEN!!!!!
     
     public final static String MODEL_PATH = "resources\\models\\20241107-1015";
-    public final static String MODEL_PATH_2 = "resources\\models\\reinforce"; // latest
-    
+    public final static String MODEL_PATH_2 = "resources\\models\\20241107-1057"; // latest, reinforce
 
     public static void main(String[] args) throws Exception {
 
         try (SavedModelBundle model = SavedModelBundle.load(MODEL_PATH, "serve")) {
-            try (SavedModelBundle model2 = SavedModelBundle.load(MODEL_PATH_2, "serve")) {
+            try (SavedModelBundle model2 = SavedModelBundle.load(MODEL_PATH_2, "serve")) { //_2
                 System.out.println("Model loaded");
                 printModelSignature(model2);
 

@@ -1,3 +1,5 @@
 {
-    "java.configuration.detectJdksAtStart": false
+    "java.configuration.detectJdksAtStart": false,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

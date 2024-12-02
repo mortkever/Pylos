@@ -91,7 +91,7 @@ public class PylosMLCollect {
         // }
 
         //test new resources
-            BattleResult br = BattleMT.play(p3, p4, 100000, 8, true); //100000
+            BattleResult br = BattleMT.play(p3, p4, 10, 8, true); //100000
             playedGames.addAll(br.playedGames);
         
         
