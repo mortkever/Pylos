@@ -1,0 +1,17 @@
+﻿player;name;opponent;win percentage;epochs;loops;games per reinforcement played
+normal train;20241204-2112;MM2;77%;5;0;0
+normal train;20241204-2112;MM4;36,50%;5;0;0
+;;;;100;;
+;;;;100;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+met 6 dense layers:;;;;;;
+Reinforce training;20241204-2127;MM2;17,20%;5;4;10000
+Reinforce training;20241204-2127;MM4;4,50%;5;4;10000
+;;;;;;
+met maar 3 dense layers: ;;;;100;20;10000
+Reinforce training;;MM2;;100;20;10000
+Reinforce training;;MM4;;;;
