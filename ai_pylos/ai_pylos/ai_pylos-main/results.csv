@@ -12,6 +12,37 @@ met 6 dense layers:;;;;;;
 Reinforce training;20241204-2127;MM2;17,20%;5;4;10000
 Reinforce training;20241204-2127;MM4;4,50%;5;4;10000
 ;;;;;;
-met maar 3 dense layers: ;;;;100;20;10000
-Reinforce training;;MM2;;100;20;10000
-Reinforce training;;MM4;;;;
+met maar 3 dense layers: ;;;training niet gelukt, na meer dan 15 loops ofzo print het allemaal neg getallen: zie onderaan;;;
+Reinforce training;*;MM2;*;100;20;10000
+Reinforce training;*;MM4;*;100;20;10000
+;;;;;;
+;;;;;;
+3 layers;;MM2;;50;5;36000
+reinforce special;;MM4;;50;5;36000
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+;;;;;;
+refinforce = just playing reinforcement games against it's previous version;;;;;;
+reinforce special = reinforcement data is sort of round tournament with this player, previous player ML, and some other players;;;;;;
+normal train = just one fitting on the trainingsdata;;;;;;

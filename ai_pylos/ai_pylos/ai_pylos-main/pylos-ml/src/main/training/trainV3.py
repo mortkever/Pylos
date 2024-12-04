@@ -15,8 +15,8 @@ REINFORCE_DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.j
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 100
-BATCH_SIZE = 1024
+EPOCHS = 50 #100
+BATCH_SIZE = 512 #1024
 N_CORES = 8
 
 os.environ["OMP_NUM_THREADS"] = str(N_CORES)
@@ -39,9 +39,9 @@ def main():
     print("scores:", scores)
 
     history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
-
-    
-    for x in range(20):
+    model.export(MODEL_EXPORT_PATH + "latest_min1")
+    model.export(MODEL_EXPORT_PATH + "latest")
+    for x in range(5):
         print("New Loop started")
         #call PylosMLReinforcementTrainer
         current_dir = os.getcwd()
