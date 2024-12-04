@@ -1,0 +1,56 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "pylos_test_for_jar",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.pylos_test_for_jar",
+            "projectName": "pylos-ml"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "PylosGuiMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.gui.PylosGuiMain",
+            "projectName": "pylos-gui"
+        },
+        {
+            "type": "java",
+            "name": "PylosMLCollect",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.PylosMLCollect",
+            "projectName": "pylos-ml"
+        },
+        {
+            "type": "java",
+            "name": "PylosMLReinforcementTrainer",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.PylosMLReinforcementTrainer",
+            "projectName": "pylos-ml"
+        },
+        {
+            "type": "java",
+            "name": "PylosMLTest",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.PylosMLTest",
+            "projectName": "pylos-ml"
+        },
+        {
+            "type": "java",
+            "name": "PylosMain",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.main.PylosMain",
+            "projectName": "pylos-student"
+        }
+    ]
+}
