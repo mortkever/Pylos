@@ -5,15 +5,17 @@ import json
 import numpy as np
 import datetime
 import os
+import subprocess
 
  #DATASET_PATH = "resources/games/0.json"
 #DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 #MODEL_EXPORT_PATH = "resources/models/"
 DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
+REINFORCE_DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json"
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 5 #100
+EPOCHS = 100
 BATCH_SIZE = 1024
 N_CORES = 8
 
@@ -38,14 +40,36 @@ def main():
 
     history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
 
+    
+    for x in range(20):
+        print("New Loop started")
+        #call PylosMLReinforcementTrainer
+        current_dir = os.getcwd()
+        jar_path = os.path.join(current_dir, 'pylos-ml', 'target', 'pylos-ml-1.0-SNAPSHOT.jar')
+        command = ['java', '-jar', jar_path]
+
+        try:
+            # Run the command and wait for it to complete
+            subprocess.run(command, check=True)
+            print("Java class executed successfully!")
+        except subprocess.CalledProcessError as e:
+            print(f"Error executing the Java class: {e}")
+
+        boards, scores = build_dataset(REINFORCE_DATASET_PATH)
+        model.export(MODEL_EXPORT_PATH + "latest_min1")
+
+        #https://stackoverflow.com/questions/39263002/calling-fit-multiple-times-in-keras
+        history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
+        model.export(MODEL_EXPORT_PATH + "latest")
+
+    
     # Save the model as SavedModel, with date and time as the name
     model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     
     model.export(MODEL_EXPORT_PATH + "latest")
-    model.export(MODEL_EXPORT_PATH + "latest_min1")
 
-    plot_training_history_loss(history)
-    plot_training_history_mae(history)
+    #plot_training_history_loss(history)
+    #plot_training_history_mae(history)
 
 def build_model():
     # The input should be a 1D array of 60 floats (-1, 0, 1)
@@ -54,10 +78,14 @@ def build_model():
     # 3 dense layers
     x = layers.Dense(128, activation='relu')(inputs)
     x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
-    x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
+
+    # x = layers.Dense(128, activation='relu')(inputs)
+    # x = layers.Dense(64, activation='relu')(x)
+    # x = layers.Dense(64, activation='relu')(x)
+    # x = layers.Dense(64, activation='relu')(x)
+    # x = layers.Dense(64, activation='relu')(x)
+    # x = layers.Dense(32, activation='relu')(x)
 
     # Output layer for regression (predict a single float value)
     outputs = layers.Dense(1)(x)
