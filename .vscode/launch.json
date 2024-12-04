@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PylosMLReinforcementTrainer",
+            "request": "launch",
+            "mainClass": "be.kuleuven.pylos.PylosMLReinforcementTrainer",
+            "projectName": "be.kuleuven-pylos-ml"
+        },
+        {
+            "type": "java",
             "name": "PylosMLCollect",
             "request": "launch",
             "mainClass": "be.kuleuven.pylos.PylosMLCollect",
