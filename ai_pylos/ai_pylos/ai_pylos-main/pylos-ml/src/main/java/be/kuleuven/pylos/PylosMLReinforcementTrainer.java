@@ -13,11 +13,14 @@ import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
 import be.kuleuven.pylos.player.student.StudentPlayer_VictorIndra;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
@@ -34,17 +37,27 @@ public class PylosMLReinforcementTrainer {
     // latest
 
     public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json";
+    public static final String IMPORT_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json";
     private static List<PlayedGame> playedGames = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         // SavedModelBundle newModel;
-        System.out.println("test 1");
+        System.out.println("Reinforcement Player loaded");
+        File file_input = new File(EXPORT_PATH);
+        FileReader reader = new FileReader(file_input);
+        Gson gson_input = new Gson();
+        Type playedGameListType = new TypeToken<List<PlayedGame>>(){}.getType();
+        playedGames = gson_input.fromJson(reader, playedGameListType);  //List<PlayedGame> 
+        reader.close();
+        System.out.println("Readed games: " + playedGames.size());
+        
+
         try (SavedModelBundle model = SavedModelBundle.load(MODEL_PATH, "serve")) {
             try (SavedModelBundle model2 = SavedModelBundle.load(MODEL_PATH_2, "serve")) {
                 System.out.println("Model loaded");
 
                 ArrayList<PylosPlayerType> players = new ArrayList<>();
-                ArrayList<PlayedGame> playedGames = new ArrayList<>();
+                //ArrayList<PlayedGame> playedGames = new ArrayList<>();
 
                 PylosPlayerType trainedPlayer = new PylosPlayerType("ML") {
                     @Override
@@ -98,7 +111,7 @@ public class PylosMLReinforcementTrainer {
                 //Test opstelling: reinforcement door te spelen tegen zichzelf en anderen (ipv enkel tegen zen vorige versie)
                 for(int i = 0; i<players.size();i++){
                     for(int j = 0; j<players.size();j++){
-                        BattleResult br = BattleMT.play(players.get(i), players.get(j), 1000, 4,true); //100000
+                        BattleResult br = BattleMT.play(players.get(i), players.get(j), 100, 4,true); //100000
                         playedGames.addAll(br.playedGames);
                     }
 

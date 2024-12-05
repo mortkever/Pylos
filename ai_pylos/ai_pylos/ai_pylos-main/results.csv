@@ -1,7 +1,7 @@
 ﻿player;name;opponent;win percentage;epochs;loops;games per reinforcement played
 normal train;20241204-2112;MM2;77%;5;0;0
 normal train;20241204-2112;MM4;36,50%;5;0;0
-;;;;100;;
+normal train ;20241205-0835;MM4;38,40%;5;0;0
 ;;;;100;;
 ;;;;;;
 ;;;;;;
@@ -17,14 +17,15 @@ Reinforce training;*;MM2;*;100;20;10000
 Reinforce training;*;MM4;*;100;20;10000
 ;;;;;;
 ;;;;;;
+;;;;;;
 3 layers;;MM2;;50;5;36000
 reinforce special;;MM4;;50;5;36000
+reinforce training;;MM2;;10;5;36000
+reinforce training;;MM4;;10;5;35000
 ;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;
+test 1;20241205-0954;MM2;73,40%;3;x;is +3600
+test 1;20241205-0954;MM4;46,10%;3;x;is +3601
 ;;;;;;
 ;;;;;;
 ;;;;;;
