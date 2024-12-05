@@ -18,9 +18,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 public class PylosMLCollect {
     public static String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
@@ -31,9 +32,13 @@ public class PylosMLCollect {
     public static void main(String[] args) throws IOException {
         // Collect games
         List<PlayedGame> playedGames = PylosMLCollect.collectGames();
+
+        playedGames.addAll(rotateBoard(playedGames));
+
         playedGames = addMoveColor(playedGames, true);
         playedGames.addAll(addMoveColor(switchPlayers(playedGames), false));
         System.out.println("Played games: " + playedGames.size());
+
 
         // Export to json file
         File file = new File(EXPORT_PATH);
@@ -147,57 +152,157 @@ public class PylosMLCollect {
         return switchedGames;
     }
 
-    private static List<PlayedGame> mirrorPlayers(List<PlayedGame> games) {
-        List<PlayedGame> switchedGames = new ArrayList<>();
+    private static List<PlayedGame> rotateBoard(List<PlayedGame> games) {
+        List<PlayedGame> rotatedGames = new ArrayList<>();
 
-        for (PlayedGame game : games) {
-            PylosPlayerType lightPlayer = new PylosPlayerType(game.lightPlayer) {
-                public PylosPlayer create() {
-                    return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
-                }
-            };
-            PylosPlayerType darkPlayer = new PylosPlayerType(game.darkPlayer) {
-                public PylosPlayer create() {
-                    return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
-                }
-            };
+        // rechtsom
+        Map<Integer, Integer> rotateOnce = new HashMap<>();
+        rotateOnce.put(0, 12);
+        rotateOnce.put(1, 8);
+        rotateOnce.put(2, 4);
+        rotateOnce.put(3, 0);
+        rotateOnce.put(4, 13);
+        rotateOnce.put(5, 9);
+        rotateOnce.put(6, 5);
+        rotateOnce.put(7, 1);
+        rotateOnce.put(8, 14);
+        rotateOnce.put(9, 10);
+        rotateOnce.put(10, 6);
+        rotateOnce.put(11, 2);
+        rotateOnce.put(12, 15);
+        rotateOnce.put(13, 11);
+        rotateOnce.put(14, 7);
+        rotateOnce.put(15, 3);
+        rotateOnce.put(16 + 0, 16 + 6);
+        rotateOnce.put(16 + 1, 16 + 3);
+        rotateOnce.put(16 + 2, 16 + 0);
+        rotateOnce.put(16 + 3, 16 + 7);
+        rotateOnce.put(16 + 4, 16 + 4);
+        rotateOnce.put(16 + 5, 16 + 1);
+        rotateOnce.put(16 + 6, 16 + 8);
+        rotateOnce.put(16 + 7, 16 + 5);
+        rotateOnce.put(16 + 8, 16 + 2);
+        rotateOnce.put(25 + 0, 25 + 2);
+        rotateOnce.put(25 + 1, 25 + 0);
+        rotateOnce.put(25 + 2, 25 + 3);
+        rotateOnce.put(25 + 3, 25 + 1);
+        rotateOnce.put(29, 29);
 
-            PylosPlayerColor winner = switch (game.winner) {
-                case 1 -> PylosPlayerColor.LIGHT;
-                case -1 -> PylosPlayerColor.DARK;
-                case 0 -> null;
-                default -> null;
-            };
+        Map<Integer, Integer> rotateTwice = new HashMap<>();
+        rotateTwice.put(0, 15);
+        rotateTwice.put(1, 14);
+        rotateTwice.put(2, 13);
+        rotateTwice.put(3, 12);
+        rotateTwice.put(4, 11);
+        rotateTwice.put(5, 10);
+        rotateTwice.put(6, 9);
+        rotateTwice.put(7, 8);
+        rotateTwice.put(8, 7);
+        rotateTwice.put(9, 6);
+        rotateTwice.put(10, 5);
+        rotateTwice.put(11, 4);
+        rotateTwice.put(12, 3);
+        rotateTwice.put(13, 2);
+        rotateTwice.put(14, 1);
+        rotateTwice.put(15, 0);
+        rotateTwice.put(16 + 0, 16 + 8);
+        rotateTwice.put(16 + 1, 16 + 7);
+        rotateTwice.put(16 + 2, 16 + 6);
+        rotateTwice.put(16 + 3, 16 + 5);
+        rotateTwice.put(16 + 4, 16 + 4);
+        rotateTwice.put(16 + 5, 16 + 3);
+        rotateTwice.put(16 + 6, 16 + 2);
+        rotateTwice.put(16 + 7, 16 + 1);
+        rotateTwice.put(16 + 8, 16 + 0);
+        rotateTwice.put(25 + 0, 25 + 3);
+        rotateTwice.put(25 + 1, 25 + 2);
+        rotateTwice.put(25 + 2, 25 + 1);
+        rotateTwice.put(25 + 3, 25 + 0);
+        rotateTwice.put(29, 29);
 
-            List<Long> boardHistory = new ArrayList<>();
-            for (Long board : game.boardHistory) {
-                Long newBoard = 0L;
-                for (int i = 0; i < 30; i++) {
-                    Long temp = board;
-                    temp = temp << 62 - 2 * i;
-                    temp = temp >>> 62;
-                    if (temp != 0L) {
-                        temp = temp == 1 ? 2L : 1L;
-                        temp = temp << 2 * i;
-                        newBoard = temp | newBoard;
+        Map<Integer, Integer> rotateThrice = new HashMap<>();
+        rotateThrice.put(0, 3);
+        rotateThrice.put(1, 7);
+        rotateThrice.put(2, 11);
+        rotateThrice.put(3, 15);
+        rotateThrice.put(4, 2);
+        rotateThrice.put(5, 6);
+        rotateThrice.put(6, 10);
+        rotateThrice.put(7, 14);
+        rotateThrice.put(8, 1);
+        rotateThrice.put(9, 5);
+        rotateThrice.put(10, 9);
+        rotateThrice.put(11, 13);
+        rotateThrice.put(12, 0);
+        rotateThrice.put(13, 4);
+        rotateThrice.put(14, 8);
+        rotateThrice.put(15, 12);
+        rotateThrice.put(16 + 0, 16 + 2);
+        rotateThrice.put(16 + 1, 16 + 5);
+        rotateThrice.put(16 + 2, 16 + 8);
+        rotateThrice.put(16 + 3, 16 + 1);
+        rotateThrice.put(16 + 4, 16 + 4);
+        rotateThrice.put(16 + 5, 16 + 7);
+        rotateThrice.put(16 + 6, 16 + 0);
+        rotateThrice.put(16 + 7, 16 + 3);
+        rotateThrice.put(16 + 8, 16 + 6);
+        rotateThrice.put(25 + 0, 25 + 1);
+        rotateThrice.put(25 + 1, 25 + 3);
+        rotateThrice.put(25 + 2, 25 + 0);
+        rotateThrice.put(25 + 3, 25 + 2);
+        rotateThrice.put(29, 29);
+
+        ArrayList<Map<Integer, Integer>> rotationMaps = new ArrayList<>();
+        rotationMaps.add(rotateOnce);
+        rotationMaps.add(rotateTwice);
+        rotationMaps.add(rotateThrice);
+
+        for(Map<Integer, Integer> rotate : rotationMaps){
+            for (PlayedGame game : games) {
+                PylosPlayerType lightPlayer = new PylosPlayerType(game.lightPlayer) {
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
                     }
+                };
+                PylosPlayerType darkPlayer = new PylosPlayerType(game.darkPlayer) {
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
+                    }
+                };
 
+                PylosPlayerColor winner = switch (game.winner) {
+                    case 1 -> PylosPlayerColor.LIGHT;
+                    case -1 -> PylosPlayerColor.DARK;
+                    case 0 -> null;
+                    default -> null;
+                };
+
+                List<Long> boardHistory = new ArrayList<>();
+                for (Long board : game.boardHistory) {
+                    Long newBoard = 0L;
+                    for (int i = 0; i < 30; i++) {
+                        Long temp = board;
+                        temp = temp << 62 - 2 * i;
+                        temp = temp >>> 62;
+                        temp = temp << 2 * rotate.get(i);
+                        newBoard = temp | newBoard;
+
+                    }
+                    boardHistory.add(newBoard);
                 }
-                boardHistory.add(newBoard);
+
+                rotatedGames.add(new PlayedGame(boardHistory, lightPlayer, darkPlayer, winner));
+
             }
-
-            switchedGames.add(new PlayedGame(boardHistory, lightPlayer, darkPlayer, winner));
-
         }
 
-        return switchedGames;
+        return rotatedGames;
     }
 
     public static List<PlayedGame> addMoveColor(List<PlayedGame> games, boolean lightFirst) {
         for (PlayedGame game : games) {
             for (int i = 0; i < game.boardHistory.size(); i++) {
                 game.boardHistory.set(i, game.boardHistory.get(i) + ((i % 2 == (lightFirst ? 0 : 1) ? 0L : 1L << 60)));
-                System.out.println(padleft(Long.toBinaryString(game.boardHistory.get(i))));
             }
         }
         return games;
