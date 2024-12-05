@@ -34,6 +34,7 @@ public class PylosMLCollect {
         List<PlayedGame> playedGames = PylosMLCollect.collectGames();
 
         playedGames.addAll(rotateBoard(playedGames));
+        playedGames.addAll(mirrorBoard(playedGames));
 
         playedGames = addMoveColor(playedGames, true);
         playedGames.addAll(addMoveColor(switchPlayers(playedGames), false));
@@ -297,6 +298,119 @@ public class PylosMLCollect {
         }
 
         return rotatedGames;
+    }
+
+    private static List<PlayedGame> mirrorBoard(List<PlayedGame> games) {
+        List<PlayedGame> mirroredGames = new ArrayList<>();
+
+        // rechtsom
+        Map<Integer, Integer> mirrorHori = new HashMap<>();
+        mirrorHori.put(0, 12);
+        mirrorHori.put(1, 13);
+        mirrorHori.put(2, 14);
+        mirrorHori.put(3, 15);
+        mirrorHori.put(4, 8);
+        mirrorHori.put(5, 9);
+        mirrorHori.put(6, 10);
+        mirrorHori.put(7, 11);
+        mirrorHori.put(8, 4);
+        mirrorHori.put(9, 5);
+        mirrorHori.put(10, 6);
+        mirrorHori.put(11, 7);
+        mirrorHori.put(12, 0);
+        mirrorHori.put(13, 1);
+        mirrorHori.put(14, 2);
+        mirrorHori.put(15, 3);
+        mirrorHori.put(16 + 0, 16 + 6);
+        mirrorHori.put(16 + 1, 16 + 7);
+        mirrorHori.put(16 + 2, 16 + 8);
+        mirrorHori.put(16 + 3, 16 + 3);
+        mirrorHori.put(16 + 4, 16 + 4);
+        mirrorHori.put(16 + 5, 16 + 5);
+        mirrorHori.put(16 + 6, 16 + 0);
+        mirrorHori.put(16 + 7, 16 + 1);
+        mirrorHori.put(16 + 8, 16 + 2);
+        mirrorHori.put(25 + 0, 25 + 2);
+        mirrorHori.put(25 + 1, 25 + 3);
+        mirrorHori.put(25 + 2, 25 + 0);
+        mirrorHori.put(25 + 3, 25 + 1);
+        mirrorHori.put(29, 29);
+
+        Map<Integer, Integer> mirrorVeri = new HashMap<>();
+        mirrorVeri.put(0, 3);
+        mirrorVeri.put(1, 2);
+        mirrorVeri.put(2, 1);
+        mirrorVeri.put(3, 0);
+        mirrorVeri.put(4, 7);
+        mirrorVeri.put(5, 6);
+        mirrorVeri.put(6, 5);
+        mirrorVeri.put(7, 4);
+        mirrorVeri.put(8, 11);
+        mirrorVeri.put(9, 10);
+        mirrorVeri.put(10, 9);
+        mirrorVeri.put(11, 8);
+        mirrorVeri.put(12, 15);
+        mirrorVeri.put(13, 14);
+        mirrorVeri.put(14, 13);
+        mirrorVeri.put(15, 12);
+        mirrorVeri.put(16 + 0, 16 + 2);
+        mirrorVeri.put(16 + 1, 16 + 1);
+        mirrorVeri.put(16 + 2, 16 + 0);
+        mirrorVeri.put(16 + 3, 16 + 5);
+        mirrorVeri.put(16 + 4, 16 + 4);
+        mirrorVeri.put(16 + 5, 16 + 3);
+        mirrorVeri.put(16 + 6, 16 + 8);
+        mirrorVeri.put(16 + 7, 16 + 7);
+        mirrorVeri.put(16 + 8, 16 + 6);
+        mirrorVeri.put(25 + 0, 25 + 1);
+        mirrorVeri.put(25 + 1, 25 + 0);
+        mirrorVeri.put(25 + 2, 25 + 3);
+        mirrorVeri.put(25 + 3, 25 + 2);
+        mirrorVeri.put(29, 29);
+
+        ArrayList<Map<Integer, Integer>> mirrorMaps = new ArrayList<>();
+        mirrorMaps.add(mirrorHori);
+        mirrorMaps.add(mirrorVeri);
+
+        for(Map<Integer, Integer> mirror : mirrorMaps){
+            for (PlayedGame game : games) {
+                PylosPlayerType lightPlayer = new PylosPlayerType(game.lightPlayer) {
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
+                    }
+                };
+                PylosPlayerType darkPlayer = new PylosPlayerType(game.darkPlayer) {
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
+                    }
+                };
+
+                PylosPlayerColor winner = switch (game.winner) {
+                    case 1 -> PylosPlayerColor.LIGHT;
+                    case -1 -> PylosPlayerColor.DARK;
+                    case 0 -> null;
+                    default -> null;
+                };
+
+                List<Long> boardHistory = new ArrayList<>();
+                for (Long board : game.boardHistory) {
+                    Long newBoard = 0L;
+                    for (int i = 0; i < 30; i++) {
+                        Long temp = board;
+                        temp = temp << 62 - 2 * i;
+                        temp = temp >>> 62;
+                        temp = temp << 2 * mirror.get(i);
+                        newBoard = temp | newBoard;
+
+                    }
+                    boardHistory.add(newBoard);
+                }
+
+                mirroredGames.add(new PlayedGame(boardHistory, lightPlayer, darkPlayer, winner));
+
+            }
+        }
+    return mirroredGames;
     }
 
     public static List<PlayedGame> addMoveColor(List<PlayedGame> games, boolean lightFirst) {
