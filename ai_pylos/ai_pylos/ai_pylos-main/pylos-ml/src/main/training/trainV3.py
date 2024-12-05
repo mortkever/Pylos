@@ -15,8 +15,8 @@ REINFORCE_DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.j
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 50 #100
-BATCH_SIZE = 512 #1024
+EPOCHS = 3 #50 #100
+BATCH_SIZE = 1024  #512 #
 N_CORES = 8
 
 os.environ["OMP_NUM_THREADS"] = str(N_CORES)
@@ -41,28 +41,33 @@ def main():
     history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
     model.export(MODEL_EXPORT_PATH + "latest_min1")
     model.export(MODEL_EXPORT_PATH + "latest")
-    for x in range(5):
+    while(history.history['loss'][-1] > 0.20):   #latest loss value 
+        #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
         print("New Loop started")
         #call PylosMLReinforcementTrainer
         current_dir = os.getcwd()
         jar_path = os.path.join(current_dir, 'pylos-ml', 'target', 'pylos-ml-1.0-SNAPSHOT.jar')
         command = ['java', '-jar', jar_path]
-
+        model.export(MODEL_EXPORT_PATH + "latest_min1")
+        
         try:
             # Run the command and wait for it to complete
             subprocess.run(command, check=True)
             print("Java class executed successfully!")
         except subprocess.CalledProcessError as e:
             print(f"Error executing the Java class: {e}")
+        
+        #model = build_model()
+        #model.compile(optimizer='adam', loss='mean_squared_error')
 
         boards, scores = build_dataset(REINFORCE_DATASET_PATH)
-        model.export(MODEL_EXPORT_PATH + "latest_min1")
+        
 
         #https://stackoverflow.com/questions/39263002/calling-fit-multiple-times-in-keras
         history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
         model.export(MODEL_EXPORT_PATH + "latest")
 
-    
+    print("Finished training")
     # Save the model as SavedModel, with date and time as the name
     model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
     
