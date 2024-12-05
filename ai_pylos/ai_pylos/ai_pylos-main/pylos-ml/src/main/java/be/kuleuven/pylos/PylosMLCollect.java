@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class PylosMLCollect {
     public static String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/" + timestamp + ".json"; // 0
-    // public static final String EXPORT_PATH =
+    public static final String EXPORT_PATH_REINFORCE = "pylos-ml/src/main/training/resources/games/reinforce.json";
     // "pylos-ml/src/main/training/resources/games/test_set.json";
 
     public static void main(String[] args) throws IOException {
@@ -52,6 +52,18 @@ public class PylosMLCollect {
         writer.close();
 
         System.out.println("Exported to: " + EXPORT_PATH);
+
+        File file_reinforce = new File(EXPORT_PATH_REINFORCE);
+        Files.createDirectories(file_reinforce.getParentFile().toPath());
+        FileWriter writer_reinforce = new FileWriter(file);
+        Gson gson_reinforce = new GsonBuilder().create();
+
+        gson.toJson(playedGames, writer);
+
+        writer.flush();
+        writer.close();
+
+        System.out.println("Exported to: " + EXPORT_PATH_REINFORCE);
     }
 
     public static List<PlayedGame> collectGames() {

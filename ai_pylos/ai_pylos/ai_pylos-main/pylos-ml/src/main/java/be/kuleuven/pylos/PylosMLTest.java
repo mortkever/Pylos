@@ -5,6 +5,7 @@ import be.kuleuven.pylos.player.PylosPlayer;
 import be.kuleuven.pylos.player.PylosPlayerType;
 import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
+import be.kuleuven.pylos.player.codes.PylosPlayerRandomFit;
 import be.kuleuven.pylos.player.student.StudentPlayer_VictorIndra;
 
 import org.tensorflow.SavedModelBundle;
@@ -47,10 +48,18 @@ public class PylosMLTest {
                         return new PylosPlayerML(model2);
                     }
                 };
-                PylosPlayerType opp = new PylosPlayerType("MM2") {
+
+                PylosPlayerType mm2 = new PylosPlayerType("MM2") {
                     @Override
                     public PylosPlayer create() {
                         return new PylosPlayerMiniMax(2);
+                    }
+                };
+
+                PylosPlayerType mm4 = new PylosPlayerType("MM4") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(4);
                     }
                 };
                 PylosPlayerType bestfit = new PylosPlayerType("bestfit") {
@@ -66,8 +75,26 @@ public class PylosMLTest {
                         return new StudentPlayer_VictorIndra();
                     }
                 };
+                PylosPlayerType mm6 = new PylosPlayerType("MM6") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(6);
+                    }
+                };
+                PylosPlayerType random = new PylosPlayerType("random") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerRandomFit();
+                    }
+                };
+                PylosPlayerType mm3 = new PylosPlayerType("MM3") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(3);
+                    }
+                };
                 //BattleMT.play(trainedPlayer, trainedPlayer2, 1000, 8);
-                BattleMT.play(trainedPlayer, studentPlayer, 1000, 8);
+                BattleMT.play(trainedPlayer, random, 1000, 8);
             }
 
         }

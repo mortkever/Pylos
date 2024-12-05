@@ -1,49 +1,59 @@
-﻿player;name;opponent;win percentage;epochs;loops;games per reinforcement played
-normal train;20241204-2112;MM2;77%;5;0;0
-normal train;20241204-2112;MM4;36,50%;5;0;0
-normal train ;20241205-0835;MM4;38,40%;5;0;0
-;;;;100;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-met 6 dense layers:;;;;;;
-Reinforce training;20241204-2127;MM2;17,20%;5;4;10000
-Reinforce training;20241204-2127;MM4;4,50%;5;4;10000
-;;;;;;
-met maar 3 dense layers: ;;;training niet gelukt, na meer dan 15 loops ofzo print het allemaal neg getallen: zie onderaan;;;
-Reinforce training;*;MM2;*;100;20;10000
-Reinforce training;*;MM4;*;100;20;10000
-;;;;;;
-;;;;;;
-;;;;;;
-3 layers;;MM2;;50;5;36000
-reinforce special;;MM4;;50;5;36000
-reinforce training;;MM2;;10;5;36000
-reinforce training;;MM4;;10;5;35000
-;;;;;;
-3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;
-test 1;20241205-0954;MM2;73,40%;3;x;is +3600
-test 1;20241205-0954;MM4;46,10%;3;x;is +3601
-;;;;;;
-3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;
-met spiegeling in reinforced data;;;;;;
-test 2;20241205-1023;MM2;67,00%;3;x;is +3600
-test 2;20241205-1023;MM4;48,80%;3;x;is +3600
-test 2;20241205-1023;best fit;90,70%;3;x;is +3600
-test 2;20241205-1023;studentplayer;46,80%;3;x;is +3600
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-refinforce = just playing reinforcement games against it's previous version;;;;;;
-reinforce special = reinforcement data is sort of round tournament with this player, previous player ML, and some other players;;;;;;
-normal train = just one fitting on the trainingsdata;;;;;;
+﻿player;name;opponent;win percentage;epochs;loops;games per reinforcement played;;
+normal train;20241204-2112;MM2;77%;5;0;0;;
+normal train;20241204-2112;MM4;36,50%;5;0;0;;
+normal train ;20241205-0835;MM4;38,40%;5;0;0;;
+;;;;100;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+met 6 dense layers:;;;;;;;;
+Reinforce training;20241204-2127;MM2;17,20%;5;4;10000;;
+Reinforce training;20241204-2127;MM4;4,50%;5;4;10000;;
+;;;;;;;;
+met maar 3 dense layers: ;;;training niet gelukt, na meer dan 15 loops ofzo print het allemaal neg getallen: zie onderaan;;;;;
+Reinforce training;*;MM2;*;100;20;10000;;
+Reinforce training;*;MM4;*;100;20;10000;;
+;;;;;;;;
+;;;;;;;;
+;;;;;;;;
+3 layers;;MM2;;50;5;36000;;
+reinforce special;;MM4;;50;5;36000;;
+reinforce training;;MM2;;10;5;36000;;
+reinforce training;;MM4;;10;5;35000;;
+;;;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;;;
+test 1;20241205-0954;MM2;73,40%;3;x;is +3600;;
+test 1;20241205-0954;MM4;46,10%;3;x;is +3601;;
+;;;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;;;
+met spiegeling in reinforced data;;;;;;;;
+test 2;20241205-1023;MM2;67,00%;3;<0.20;is +3600;;
+test 2;20241205-1023;MM4;48,80%;3;<0.21;is +3600;;
+test 2;20241205-1023;best fit;90,70%;3;<0.22;is +3600;;
+test 2;20241205-1023;studentplayer;46,80%;3;<0.23;is +3600;;
+;;;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;;;
+met new played games * 8 (transformaties);;;;;;;;
+test 3;20241205-1111;MM2;88,80%;3;<0.19;is +28800;;
+test 3;20241205-1111;MM4;54,90%;3;<0.20;is +28800;;
+test 3;20241205-1111;best fit;87,80%;3;<0.21;is +28800;;
+test 3;20241205-1111;studentplayer;53,80%;3;<0.22;is +28800;;
+;;;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;;;
+met new played games * 8 (transformaties);;;;;;;;
+test 4;20241205-1301;MM2;84,00%;15;<0.18;is +28800;;printe vaak die getallen dat eval gelijk was aan besteval
+test 4;20241205-1301;MM4;63,50%;15;<0.18;is +28800;;
+test 4;20241205-1301;best fit;94,90%;15;<0.18;is +28800;;
+test 4;20241205-1301;studentplayer;57,90%;15;<0.18;is +28800;;
+test 4;20241205-1301;MM6;55,80%;15;<0.18;is +28800;;
+test 4;20241205-1301;MM3;67,20%;15;<0.18;is +28800;;
+test 4;20241205-1301;random player;100,00%;15;<0.18;is +28800;;
+refinforce = just playing reinforcement games against it's previous version;;;;;;;;
+reinforce special = reinforcement data is sort of round tournament with this player, previous player ML, and some other players;;;;;;;;
+normal train = just one fitting on the trainingsdata;;;;;;;;
+;;;;;;;;
+checken overfitting of niet;;;;;;;;
+mss ook eens spelen tegen speler die hij niet gezien heeft in trainingsdata;;;;;;;;
+onze eigen speler, hebben we diepte op -1 gezet?;;;;;;;;
