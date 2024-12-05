@@ -18,8 +18,10 @@ public class PylosMLTest {
 
     //MODEL AANPASSEN NAAR DEZE DAT JE WIL GEBRUIKEN!!!!!
     
-    public final static String MODEL_PATH = "resources\\models\\20241107-1015";
-    public final static String MODEL_PATH_2 = "resources\\models\\20241107-1057"; // latest, reinforce
+    public final static String MODEL_PATH = "resources\\models\\latest";
+    //public final static String MODEL_PATH_2 = "resources\\models\\20241107-1057"; // latest, reinforce
+
+    public final static String MODEL_PATH_2 = "resources\\models\\latest_min1";
 
     public static void main(String[] args) throws Exception {
 
@@ -36,16 +38,16 @@ public class PylosMLTest {
                 };
 
                 //tegen een oudere versie van ml spelen
-                // PylosPlayerType trainedPlayer2 = new PylosPlayerType("ML2") {
-                //     @Override
-                //     public PylosPlayer create() {
-                //         return new PylosPlayerML(model2);
-                //     }
-                // };
-                PylosPlayerType opp = new PylosPlayerType("MM3") {
+                PylosPlayerType trainedPlayer2 = new PylosPlayerType("ML2") {
                     @Override
                     public PylosPlayer create() {
-                        return new PylosPlayerMiniMax(3);
+                        return new PylosPlayerML(model2);
+                    }
+                };
+                PylosPlayerType opp = new PylosPlayerType("MM4") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerMiniMax(4);
                     }
                 };
 
