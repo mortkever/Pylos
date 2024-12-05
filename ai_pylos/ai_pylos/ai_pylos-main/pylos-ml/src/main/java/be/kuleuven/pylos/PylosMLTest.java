@@ -3,7 +3,10 @@ package be.kuleuven.pylos;
 import be.kuleuven.pylos.battle.BattleMT;
 import be.kuleuven.pylos.player.PylosPlayer;
 import be.kuleuven.pylos.player.PylosPlayerType;
+import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
 import be.kuleuven.pylos.player.codes.PylosPlayerMiniMax;
+import be.kuleuven.pylos.player.student.StudentPlayer_VictorIndra;
+
 import org.tensorflow.SavedModelBundle;
 import org.tensorflow.proto.MetaGraphDef;
 import org.tensorflow.proto.SignatureDef;
@@ -50,9 +53,21 @@ public class PylosMLTest {
                         return new PylosPlayerMiniMax(2);
                     }
                 };
+                PylosPlayerType bestfit = new PylosPlayerType("bestfit") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new PylosPlayerBestFit();
+                    }
+                };
 
+                PylosPlayerType studentPlayer = new PylosPlayerType("StudentPlayer_VictorIndra") {
+                    @Override
+                    public PylosPlayer create() {
+                        return new StudentPlayer_VictorIndra();
+                    }
+                };
                 //BattleMT.play(trainedPlayer, trainedPlayer2, 1000, 8);
-                BattleMT.play(trainedPlayer, opp, 1000, 8);
+                BattleMT.play(trainedPlayer, studentPlayer, 1000, 8);
             }
 
         }

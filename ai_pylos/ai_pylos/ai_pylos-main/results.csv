@@ -27,12 +27,12 @@ reinforce training;;MM4;;10;5;35000
 test 1;20241205-0954;MM2;73,40%;3;x;is +3600
 test 1;20241205-0954;MM4;46,10%;3;x;is +3601
 ;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
-;;;;;;
+3 layers, telkens nieuwe data toevoegen tot loss onder 0.2, verder bouwen op bestaand model;;;;;;
+met spiegeling in reinforced data;;;;;;
+test 2;20241205-1023;MM2;67,00%;3;x;is +3600
+test 2;20241205-1023;MM4;48,80%;3;x;is +3600
+test 2;20241205-1023;best fit;90,70%;3;x;is +3600
+test 2;20241205-1023;studentplayer;46,80%;3;x;is +3600
 ;;;;;;
 ;;;;;;
 ;;;;;;

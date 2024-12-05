@@ -15,7 +15,7 @@ REINFORCE_DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.j
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS = 3 #50 #100
+EPOCHS = 10 #50 #100
 BATCH_SIZE = 1024  #512 #
 N_CORES = 8
 
@@ -41,7 +41,7 @@ def main():
     history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
     model.export(MODEL_EXPORT_PATH + "latest_min1")
     model.export(MODEL_EXPORT_PATH + "latest")
-    while(history.history['loss'][-1] > 0.20):   #latest loss value 
+    while(history.history['loss'][-1] > 0.19):   #latest loss value 
         #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
         print("New Loop started")
         #call PylosMLReinforcementTrainer
@@ -82,6 +82,8 @@ def build_model():
 
     # 3 dense layers
     x = layers.Dense(128, activation='relu')(inputs)
+    x = layers.Dense(128, activation='relu')(x)
+    x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
 

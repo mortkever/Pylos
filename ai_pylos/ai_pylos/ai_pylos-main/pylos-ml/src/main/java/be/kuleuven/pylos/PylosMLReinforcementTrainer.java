@@ -7,6 +7,7 @@ import org.tensorflow.SavedModelBundle;
 import be.kuleuven.pylos.battle.BattleMT;
 import be.kuleuven.pylos.battle.BattleResult;
 import be.kuleuven.pylos.battle.data.PlayedGame;
+import be.kuleuven.pylos.game.PylosPlayerColor;
 import be.kuleuven.pylos.player.PylosPlayer;
 import be.kuleuven.pylos.player.PylosPlayerType;
 import be.kuleuven.pylos.player.codes.PylosPlayerBestFit;
@@ -39,6 +40,7 @@ public class PylosMLReinforcementTrainer {
     public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json";
     public static final String IMPORT_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json";
     private static List<PlayedGame> playedGames = new ArrayList<>();
+    private static List<PlayedGame> newPlayedGames = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
         // SavedModelBundle newModel;
@@ -112,14 +114,18 @@ public class PylosMLReinforcementTrainer {
                 for(int i = 0; i<players.size();i++){
                     for(int j = 0; j<players.size();j++){
                         BattleResult br = BattleMT.play(players.get(i), players.get(j), 100, 4,true); //100000
-                        playedGames.addAll(br.playedGames);
+                        newPlayedGames.addAll(br.playedGames);
                     }
 
                 }
 
                 //BattleResult br = BattleMT.play(trainedPlayer, trainedPlayer2, 10000, 8, true); // 100000
                 //playedGames.addAll(br.playedGames);
+                newPlayedGames = addMoveColor(newPlayedGames, true);
+                newPlayedGames.addAll(addMoveColor(switchPlayers(newPlayedGames), false));
 
+                System.out.println("new played games: " + newPlayedGames.size());
+                playedGames.addAll(newPlayedGames);
                 System.out.println("Played games: " + playedGames.size());
 
                 // Export to json file
@@ -149,4 +155,67 @@ public class PylosMLReinforcementTrainer {
         }
     }
 
+    
+    private static List<PlayedGame> switchPlayers(List<PlayedGame> games) {
+        List<PlayedGame> switchedGames = new ArrayList<>();
+
+        for (PlayedGame game : games) {
+            PylosPlayerType lightPlayer = new PylosPlayerType(game.lightPlayer) {
+                public PylosPlayer create() {
+                    return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
+                }
+            };
+            PylosPlayerType darkPlayer = new PylosPlayerType(game.darkPlayer) {
+                public PylosPlayer create() {
+                    return new PylosPlayerMiniMax(5); // houvast geen eigenlijk nut
+                }
+            };
+
+            PylosPlayerColor winner = switch (game.winner) {
+                case 1 -> PylosPlayerColor.DARK; // switched player colors winner
+                case -1 -> PylosPlayerColor.LIGHT;
+                case 0 -> null;
+                default -> null;
+            };
+
+            List<Long> boardHistory = new ArrayList<>();
+            for (Long board : game.boardHistory) {
+                Long newBoard = 0L;
+                for (int i = 0; i < 30; i++) {
+                    Long temp = board;
+                    temp = temp << 62 - 2 * i;
+                    temp = temp >>> 62;
+                    if (temp != 0L) {
+                        temp = temp == 1 ? 2L : 1L;
+                        temp = temp << 2 * i;
+                        newBoard = temp | newBoard;
+                    }
+
+                }
+                boardHistory.add(newBoard);
+            }
+
+            switchedGames.add(new PlayedGame(boardHistory, lightPlayer, darkPlayer, winner));
+
+        }
+
+        return switchedGames;
+    }
+    public static List<PlayedGame> addMoveColor(List<PlayedGame> games, boolean lightFirst) {
+        for (PlayedGame game : games) {
+            for (int i = 0; i < game.boardHistory.size(); i++) {
+                game.boardHistory.set(i, game.boardHistory.get(i) + ((i % 2 == (lightFirst ? 0 : 1) ? 0L : 1L << 60)));
+                System.out.println(padleft(Long.toBinaryString(game.boardHistory.get(i))));
+            }
+        }
+        return games;
+    }
+
+    public static String padleft(String input) {
+        int lengte = input.length();
+        for (int i = 0; i < 64 - lengte; i++)
+            input = "0" + input;
+
+        return input;
+    }
 }
