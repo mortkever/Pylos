@@ -53,7 +53,7 @@ public class PylosPlayerML extends PylosPlayer {
                 bestActions.clear();
                 bestActions.add(action);
             } else if (eval == bestEval) {
-                System.out.println(eval);
+                //System.out.println(eval);
                 bestActions.add(action);
             }
         }

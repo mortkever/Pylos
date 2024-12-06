@@ -7,6 +7,11 @@ import datetime
 import os
 import subprocess
 
+#Split arrays or matrices into random train and test subsets.
+#https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html
+from sklearn.model_selection import train_test_split
+
+
  #DATASET_PATH = "resources/games/0.json"
 #DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 #MODEL_EXPORT_PATH = "resources/models/"
@@ -31,6 +36,7 @@ def main():
     model.compile(optimizer='adam', loss='mean_squared_error')
 
     boards, scores = build_dataset(DATASET_PATH)
+    boards_train, boards_test, scores_train, scores_test = train_test_split(boards, scores, test_size=0.2, random_state=42)
 
     print("# datapoints:", len(boards))
 
@@ -38,11 +44,20 @@ def main():
     print("boards:", boards)
     print("scores:", scores)
 
-    history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
+    history = model.fit(boards_train, scores_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
+
+
+    test_results = model.evaluate(boards_test, scores_test, verbose=1)
+
     model.export(MODEL_EXPORT_PATH + "latest_min1")
     model.export(MODEL_EXPORT_PATH + "latest")
-    while(history.history['loss'][-1] > 0.18):   #latest loss value 
+
+    test_loss = test_results #[0]
+    print(f"Training loss: {history.history['loss'][-1]}, Test loss: {test_loss}")
+
+    while(history.history['loss'][-1] > 0.17 and test_loss > 0.18):   #latest loss value 
         #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
+
         print("New Loop started")
         #call PylosMLReinforcementTrainer
         current_dir = os.getcwd()
@@ -61,20 +76,32 @@ def main():
         #model.compile(optimizer='adam', loss='mean_squared_error')
 
         boards, scores = build_dataset(REINFORCE_DATASET_PATH)
-        
+        #nieuwe data, nieuwe split
+        boards_train, boards_test, scores_train, scores_test = train_test_split(boards, scores, test_size=0.2, random_state=42)
+
 
         #https://stackoverflow.com/questions/39263002/calling-fit-multiple-times-in-keras
-        history = model.fit(boards, scores, epochs=EPOCHS, batch_size=BATCH_SIZE)
+        history = model.fit( boards_train, scores_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
         model.export(MODEL_EXPORT_PATH + "latest")
 
+        test_results = model.evaluate(boards_test, scores_test, verbose=1)
+        test_loss = test_results
+
+        print(f"Training loss: {history.history['loss'][-1]}, Test loss: {test_loss}")
+
+
     print("Finished training")
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M")
     # Save the model as SavedModel, with date and time as the name
-    model.export(MODEL_EXPORT_PATH + datetime.datetime.now().strftime("%Y%m%d-%H%M"))
+    model.export(MODEL_EXPORT_PATH + timestamp)
     
     model.export(MODEL_EXPORT_PATH + "latest")
 
-    #plot_training_history_loss(history)
+
+    plot_training_history_loss(history, timestamp)
     #plot_training_history_mae(history)
+    plot_training_vs_test(history, test_results, timestamp)
 
 def build_model():
     # The input should be a 1D array of 60 floats (-1, 0, 1)
@@ -132,10 +159,9 @@ def build_dataset(path):
 
     return np.array(boards, dtype=np.float32), np.array(scores, dtype=np.float32)
 
-def plot_training_history_loss(history):
+def plot_training_history_loss(history, timestamp):
     epochs = range(1, len(history.history['loss']) + 1)
 
-    # Plot loss
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, history.history['loss'], label='Training Loss')
     plt.title('Training Loss Over Epochs')
@@ -143,7 +169,32 @@ def plot_training_history_loss(history):
     plt.ylabel('Loss')
     plt.legend()
     plt.grid(True)
-    plt.show()
+
+    plt.savefig('graphs/training_loss'+timestamp+'.png')
+    print("Training loss plot saved as 'training_loss timestamp.png'")
+
+def plot_training_vs_test(history, test_results, timestamp):
+    epochs = range(1, len(history.history['loss']) + 1)
+
+    # Plot loss
+    plt.figure(figsize=(12, 6))
+    plt.plot(epochs, history.history['loss'], label='Training Loss', color='blue')
+    plt.axhline(y=test_results[0], color='blue', linestyle='--', label='Test Loss')
+    
+    # Plot MAE
+    plt.plot(epochs, history.history['mae'], label='Training MAE', color='green')
+    plt.axhline(y=test_results[1], color='green', linestyle='--', label='Test MAE')
+
+    plt.title('Training vs Test Metrics')
+    plt.xlabel('Epochs')
+    plt.ylabel('Metric Value')
+    plt.legend()
+    plt.grid(True)
+
+    
+    graph_path = f'graphs/metrics_comparison_{timestamp}.png'
+    plt.savefig(graph_path)
+    print(f"Training vs Test metrics plot saved as '{graph_path}'")
 
 def plot_training_history_mae(history):
     epochs = range(1, len(history.history['mae']) + 1)
