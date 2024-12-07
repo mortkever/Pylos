@@ -21,7 +21,7 @@ MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
 EPOCHS =  15 #10 #50 #100
-BATCH_SIZE = 1024  #512 #
+BATCH_SIZE = 2048 #1024  #512 #
 N_CORES = 8
 
 os.environ["OMP_NUM_THREADS"] = str(N_CORES)
@@ -55,7 +55,7 @@ def main():
     test_loss = test_results #[0]
     print(f"Training loss: {history.history['loss'][-1]}, Test loss: {test_loss}")
 
-    while(history.history['loss'][-1] > 0.17 and test_loss > 0.18):   #latest loss value 
+    while(history.history['loss'][-1] > 0.16 and test_loss > 0.175):   #latest loss value 
         #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
 
         print("New Loop started")

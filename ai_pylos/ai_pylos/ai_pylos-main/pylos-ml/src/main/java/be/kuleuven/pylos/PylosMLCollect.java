@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class PylosMLCollect {
     public static String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/" + timestamp + ".json"; // 0
+    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/6_12_2024.json"; // 0
     public static final String EXPORT_PATH_REINFORCE = "pylos-ml/src/main/training/resources/games/reinforce.json";
     // "pylos-ml/src/main/training/resources/games/test_set.json";
 
@@ -54,27 +54,27 @@ public class PylosMLCollect {
 
         System.out.println("Exported to: " + EXPORT_PATH);
 
-        File file_reinforce = new File(EXPORT_PATH_REINFORCE);
-        Files.createDirectories(file_reinforce.getParentFile().toPath());
-        FileWriter writer_reinforce = new FileWriter(file);
-        Gson gson_reinforce = new GsonBuilder().create();
+        // File file_reinforce = new File(EXPORT_PATH_REINFORCE);
+        // Files.createDirectories(file_reinforce.getParentFile().toPath());
+        // FileWriter writer_reinforce = new FileWriter(file);
+        // Gson gson_reinforce = new GsonBuilder().create();
 
-        gson.toJson(playedGames, writer);
+        // gson_reinforce.toJson(playedGames, writer);
 
-        writer.flush();
-        writer.close();
+        // writer_reinforce.flush();
+        // writer_reinforce.close();
 
-        System.out.println("Exported to: " + EXPORT_PATH_REINFORCE);
+        // System.out.println("Exported to: " + EXPORT_PATH_REINFORCE);
     }
 
     public static List<PlayedGame> collectGames() {
         ArrayList<PylosPlayerType> players = new ArrayList<>();
         ArrayList<PlayedGame> playedGames = new ArrayList<>();
 
-        PylosPlayerType p1 = new PylosPlayerType("BF") {
+        PylosPlayerType p1 = new PylosPlayerType("MM6") {
             @Override
             public PylosPlayer create() {
-                return new PylosPlayerBestFit();
+                return new PylosPlayerMiniMax(6);
             }
         };
         players.add(0, p1);
@@ -101,20 +101,33 @@ public class PylosMLCollect {
                 return new PylosPlayerMiniMax(5);
             }
         };
-        players.add(2, p4);
+        players.add(3, p4);
+        PylosPlayerType p5 = new PylosPlayerType("MM8") {
+            @Override
+            public PylosPlayer create() {
+                return new PylosPlayerMiniMax(8);
+            }
+        };
+        players.add(4, p5);
+        PylosPlayerType p6 = new PylosPlayerType("MM10") {
+            @Override
+            public PylosPlayer create() {
+                return new PylosPlayerMiniMax(10);
+            }
+        };
+        players.add(5, p6);
 
-        // for(int i = 0; i<players.size();i++){
-        // for(int j = 0; j<players.size();j++){
-        // BattleResult br = BattleMT.play(players.get(i), players.get(j), 100000, 8,
-        // true); //100000
-        // playedGames.addAll(br.playedGames);
-        // }
+        for(int i = 0; i<players.size();i++){
+            for(int j = 0; j<players.size();j++){
+                BattleResult br = BattleMT.play(players.get(i), players.get(j), 2, 8,true); //100000
+            playedGames.addAll(br.playedGames);
+        }
 
-        // }
+        }
 
         // test new resources
-        BattleResult br = BattleMT.play(p3, p4, 10, 8, true); // 100000
-        playedGames.addAll(br.playedGames);
+        //BattleResult br = BattleMT.play(p3, p4, 10, 8, true); // 100000
+        //playedGames.addAll(br.playedGames);
 
         return playedGames;
     }
