@@ -114,7 +114,7 @@ public class PylosMLReinforcementTrainer {
 
                 //Test opstelling: reinforcement door te spelen tegen zichzelf en anderen (ipv enkel tegen zen vorige versie)
                 for(int i = 0; i<players.size();i++){
-                    for(int j = 0; j<players.size();j++){
+                    for(int j = i+1; j<players.size();j++){
                         BattleResult br = BattleMT.play(players.get(i), players.get(j), 100, 4,true); //100000
                         newPlayedGames.addAll(br.playedGames);
                     }

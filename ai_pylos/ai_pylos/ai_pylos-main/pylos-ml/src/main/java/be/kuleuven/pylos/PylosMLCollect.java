@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 public class PylosMLCollect {
     public static String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/6_12_2024.json"; // 0
+    public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/7_12_2024.json"; // 0
     public static final String EXPORT_PATH_REINFORCE = "pylos-ml/src/main/training/resources/games/reinforce.json";
     // "pylos-ml/src/main/training/resources/games/test_set.json";
 
@@ -79,13 +79,13 @@ public class PylosMLCollect {
         };
         players.add(0, p1);
 
-        PylosPlayerType p2 = new PylosPlayerType("MM2") {
-            @Override
-            public PylosPlayer create() {
-                return new PylosPlayerMiniMax(2);
-            }
-        };
-        players.add(1, p2);
+        // PylosPlayerType p2 = new PylosPlayerType("MM2") {
+        //     @Override
+        //     public PylosPlayer create() {
+        //         return new PylosPlayerMiniMax(2);
+        //     }
+        // };
+        // players.add(1, p2);
 
         PylosPlayerType p3 = new PylosPlayerType("StudentPlayer_VictorIndra") {
             @Override
@@ -93,35 +93,37 @@ public class PylosMLCollect {
                 return new StudentPlayer_VictorIndra();
             }
         };
-        players.add(2, p3);
+        players.add(1, p3);
 
-        PylosPlayerType p4 = new PylosPlayerType("MM4") {
-            @Override
-            public PylosPlayer create() {
-                return new PylosPlayerMiniMax(5);
-            }
-        };
-        players.add(3, p4);
+        // PylosPlayerType p4 = new PylosPlayerType("MM4") {
+        //     @Override
+        //     public PylosPlayer create() {
+        //         return new PylosPlayerMiniMax(5);
+        //     }
+        // };
+        //players.add(3, p4);
         PylosPlayerType p5 = new PylosPlayerType("MM8") {
             @Override
             public PylosPlayer create() {
                 return new PylosPlayerMiniMax(8);
             }
         };
-        players.add(4, p5);
+        players.add(2, p5);
         PylosPlayerType p6 = new PylosPlayerType("MM10") {
             @Override
             public PylosPlayer create() {
                 return new PylosPlayerMiniMax(10);
             }
         };
-        players.add(5, p6);
+        players.add(3, p6);
 
         for(int i = 0; i<players.size();i++){
-            for(int j = 0; j<players.size();j++){
-                BattleResult br = BattleMT.play(players.get(i), players.get(j), 2, 8,true); //100000
-            playedGames.addAll(br.playedGames);
-        }
+            for(int j = i+1; j<players.size();j++){
+                BattleResult br = BattleMT.play(players.get(i), players.get(j), 1000, 8,true); //100000
+                playedGames.addAll(br.playedGames);
+                //break;
+            }
+            //break;
 
         }
 

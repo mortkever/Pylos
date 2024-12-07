@@ -94,7 +94,7 @@ public class PylosMLTest {
                     }
                 };
                 //BattleMT.play(trainedPlayer, trainedPlayer2, 1000, 8);
-                BattleMT.play(trainedPlayer, random, 1000, 8);
+                BattleMT.play(trainedPlayer, studentPlayer, 1000, 8);
             }
 
         }
