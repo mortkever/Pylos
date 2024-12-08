@@ -66,17 +66,17 @@ public class PylosPlayerML extends PylosPlayer {
     // Returns a value which we try to maximise and our opponent tries to minimize.
     private float evalBoard(PylosBoard board, PylosPlayerColor color) {
         long boardAsLong = board.toLong();
+        boardAsLong = boardAsLong + (((color == PylosPlayerColor.LIGHT ? 1L : 0L) << 60));
 
         // convert board to array of bits
-        float[] boardAsArray = new float[60];
-        for (int i = 0; i < 60; i++) {
-            int leftShifts = 59 - i;
+        Float[] boardAsArray = new Float[61];
+        for (int i = 0; i < 61; i++) {
+            int leftShifts = 60 - i;
             boolean light = (boardAsLong & (1L << leftShifts)) == 0;
-            boardAsArray[i] = light ? 0 : 1;
+            boardAsArray[i] = (float) (light ? 0 : 1);
         }
-
         float output = Float.NaN;
-        try (Tensor inputTensor = TFloat32.tensorOf(StdArrays.ndCopyOf(new float[][] { boardAsArray }))) {
+        try (Tensor inputTensor = TFloat32.tensorOf(StdArrays.ndCopyOf(new Float[][] { boardAsArray }))) {
             try (TFloat32 outputTensor = (TFloat32) model.session().runner()
                     .feed("serving_default_keras_tensor:0", inputTensor)
                     .fetch("StatefulPartitionedCall_1:0")
