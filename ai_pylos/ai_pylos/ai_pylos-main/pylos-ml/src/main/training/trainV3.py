@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from keras import layers, models
 import json
 import numpy as np
 import datetime
@@ -15,12 +15,12 @@ from sklearn.model_selection import train_test_split
  #DATASET_PATH = "resources/games/0.json"
 #DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 #MODEL_EXPORT_PATH = "resources/models/"
-DATASET_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json"
+DATASET_PATH = "pylos-ml/src/main/training/resources/games/0.json"
 REINFORCE_DATASET_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json"
 MODEL_EXPORT_PATH = "resources/models/"
 SELECTED_PLAYERS = []
 DISCOUNT_FACTOR = 0.98
-EPOCHS =  15 #10 #50 #100
+EPOCHS =  20 #10 #50 #100
 BATCH_SIZE = 2048 #1024  #512 #
 N_CORES = 8
 
@@ -35,7 +35,7 @@ def main():
 
     model.compile(optimizer='adam', loss='mean_squared_error')
 
-    boards, scores = build_dataset(DATASET_PATH)
+    boards, scores = build_dataset(REINFORCE_DATASET_PATH)
     boards_train, boards_test, scores_train, scores_test = train_test_split(boards, scores, test_size=0.2, random_state=42)
 
     print("# datapoints:", len(boards))
@@ -54,58 +54,69 @@ def main():
 
     test_loss = test_results #[0]
     print(f"Training loss: {history.history['loss'][-1]}, Test loss: {test_loss}")
+    
+    try:
+        while(True):   #latest loss value 
+            #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
 
-    while(history.history['loss'][-1] > 0.16 and test_loss > 0.175):   #latest loss value 
-        #while(np.mean(history.history['loss']) > 0.20): #mean loss value is also possible
+            print("New Loop started")
+            #call PylosMLReinforcementTrainer
+            current_dir = os.getcwd()
+            #ai_pylos\ai_pylos\ai_pylos-main\pylos-ml\target\pylos-ml-1.0-SNAPSHOT.jar
+            jar_path = os.path.join(current_dir, "ai_pylos", "ai_pylos", "ai_pylos-main", 'pylos-ml', 'target', 'pylos-ml-1.0-SNAPSHOT.jar')
+            #jar_path = os.path.join(current_dir, 'pylos-ml', 'target', 'pylos-ml-1.0-SNAPSHOT.jar')
+            command = ['java', '-jar', jar_path]
+            print("Exporting model:")
+            model.export(MODEL_EXPORT_PATH + "latest_min1")
+            
+            print("Running JAR: ")
+            try:
+                # Run the command and wait for it to complete
+                subprocess.run(command, check=True)
+                print("Java class executed successfully!")
+            except subprocess.CalledProcessError as e:
+                print(f"Error executing the Java class: {e}")
+            
+            #model = build_model()
+            #model.compile(optimizer='adam', loss='mean_squared_error')
 
-        print("New Loop started")
-        #call PylosMLReinforcementTrainer
-        current_dir = os.getcwd()
-        jar_path = os.path.join(current_dir, 'pylos-ml', 'target', 'pylos-ml-1.0-SNAPSHOT.jar')
-        command = ['java', '-jar', jar_path]
-        model.export(MODEL_EXPORT_PATH + "latest_min1")
-        
-        try:
-            # Run the command and wait for it to complete
-            subprocess.run(command, check=True)
-            print("Java class executed successfully!")
-        except subprocess.CalledProcessError as e:
-            print(f"Error executing the Java class: {e}")
-        
-        #model = build_model()
-        #model.compile(optimizer='adam', loss='mean_squared_error')
-
-        boards, scores = build_dataset(REINFORCE_DATASET_PATH)
-        #nieuwe data, nieuwe split
-        boards_train, boards_test, scores_train, scores_test = train_test_split(boards, scores, test_size=0.2, random_state=42)
+            print("Building dataset")
+            boards, scores = build_dataset(REINFORCE_DATASET_PATH)
+            #nieuwe data, nieuwe split
+            boards_train, boards_test, scores_train, scores_test = train_test_split(boards, scores, test_size=0.2, random_state=42)
 
 
-        #https://stackoverflow.com/questions/39263002/calling-fit-multiple-times-in-keras
-        history = model.fit( boards_train, scores_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
-        model.export(MODEL_EXPORT_PATH + "latest")
+            #https://stackoverflow.com/questions/39263002/calling-fit-multiple-times-in-keras
+            print("Fitting model:")
+            history = model.fit( boards_train, scores_train, epochs=EPOCHS, batch_size=BATCH_SIZE)
+            model.export(MODEL_EXPORT_PATH + "latest")
 
+            print("\n")
+
+    except KeyboardInterrupt:
+
+        print("Finished training")
+
+        print("Evaluating model")
         test_results = model.evaluate(boards_test, scores_test, verbose=1)
         test_loss = test_results
 
         print(f"Training loss: {history.history['loss'][-1]}, Test loss: {test_loss}")
 
-
-    print("Finished training")
-
-    timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M")
-    # Save the model as SavedModel, with date and time as the name
-    model.export(MODEL_EXPORT_PATH + timestamp)
-    
-    model.export(MODEL_EXPORT_PATH + "latest")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d-%H%M")
+        # Save the model as SavedModel, with date and time as the name
+        model.export(MODEL_EXPORT_PATH + timestamp)
+        
+        model.export(MODEL_EXPORT_PATH + "latest")
 
 
-    plot_training_history_loss(history, timestamp)
-    #plot_training_history_mae(history)
-    plot_training_vs_test(history, test_results, timestamp)
+        plot_training_history_loss(history, timestamp)
+        #plot_training_history_mae(history)
+        plot_training_vs_test(history, test_results, timestamp)
 
 def build_model():
     # The input should be a 1D array of 60 floats (-1, 0, 1)
-    inputs = layers.Input(shape=(60,), dtype=tf.float32)
+    inputs = layers.Input(shape=(61,), dtype=tf.float32)
 
     # 3 dense layers
     x = layers.Dense(128, activation='relu')(inputs)
@@ -113,6 +124,10 @@ def build_model():
     x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(64, activation='relu')(x)
     x = layers.Dense(32, activation='relu')(x)
+    x = layers.Dense(32, activation='relu')(x)
+    x = layers.Dense(16, activation='relu')(x)
+    x = layers.Dense(8, activation='relu')(x)
+
 
     # x = layers.Dense(128, activation='relu')(inputs)
     # x = layers.Dense(64, activation='relu')(x)
@@ -148,9 +163,8 @@ def build_dataset(path):
 
         for i, board_as_long in enumerate(game["boardHistory"]):
             # Convert 64-bit integer to a binary string with 60 bits
-            board_as_array = np.array([(board_as_long >> j) & 1 for j in range(60 - 1, -1, -1)], dtype=np.float32)
+            board_as_array = np.array([(board_as_long >> j) & 1 for j in range(61 - 1, -1, -1)], dtype=np.float32)
             discounted_score = winner * (DISCOUNT_FACTOR ** (n_moves - i))
-
             boards.append(board_as_array)
             scores.append(discounted_score)
 
@@ -179,11 +193,11 @@ def plot_training_vs_test(history, test_results, timestamp):
     # Plot loss
     plt.figure(figsize=(12, 6))
     plt.plot(epochs, history.history['loss'], label='Training Loss', color='blue')
-    plt.axhline(y=test_results[0], color='blue', linestyle='--', label='Test Loss')
+    plt.axhline(y=test_results, color='blue', linestyle='--', label='Test Loss')
     
     # Plot MAE
-    plt.plot(epochs, history.history['mae'], label='Training MAE', color='green')
-    plt.axhline(y=test_results[1], color='green', linestyle='--', label='Test MAE')
+    #plt.plot(epochs, history.history['mae'], label='Training MAE', color='green')
+    #plt.axhline(y=test_results[1], color='green', linestyle='--', label='Test MAE')
 
     plt.title('Training vs Test Metrics')
     plt.xlabel('Epochs')
