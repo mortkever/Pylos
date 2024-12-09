@@ -22,7 +22,7 @@ public class PylosMLTest {
 
     //MODEL AANPASSEN NAAR DEZE DAT JE WIL GEBRUIKEN!!!!!
     
-    public final static String MODEL_PATH = "resources\\models\\latest";
+    public final static String MODEL_PATH = "resources\\models\\latest_sunday_lasagna_extra_layers";
     //public final static String MODEL_PATH_2 = "resources\\models\\20241107-1057"; // latest, reinforce
 
     public final static String MODEL_PATH_2 = "resources\\models\\latest_min1";

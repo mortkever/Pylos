@@ -29,15 +29,9 @@ import java.util.HashMap;
 
 public class PylosMLReinforcementTrainer {
 
-    // public final static String MODEL_PATH =
-    // "pylos-ml/src/main/training/resources/models/latest";
-    // public final static String MODEL_PATH = "resources\\models\\reinforce_old";
-    public final static String MODEL_PATH = "resources\\models\\latest_min1"; // 20241107-1015
 
-    // public final static String MODEL_PATH_2 = "resources\\models\\20241120-1844";
-    public final static String MODEL_PATH_2 = "resources\\models\\latest"; // latest
-    // public final static String MODEL_PATH_2 = "resources\\models\\reinforce"; //
-    // latest
+    public final static String MODEL_PATH = "resources\\models\\latest_min1"; 
+    public final static String MODEL_PATH_2 = "resources\\models\\latest"; 
 
     public static final String EXPORT_PATH = "pylos-ml/src/main/training/resources/games/reinforce.json";
     public static final String IMPORT_PATH = "pylos-ml/src/main/training/resources/games/1731625595073.json";
