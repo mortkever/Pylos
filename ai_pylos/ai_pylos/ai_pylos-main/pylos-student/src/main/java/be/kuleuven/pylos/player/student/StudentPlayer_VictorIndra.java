@@ -15,7 +15,7 @@ import java.util.Random;
 
 public class StudentPlayer_VictorIndra extends PylosPlayer {
     // ---------------------------------------------------------------------------------------
-    private int diepte = 7; //aantal lagen dat we diep kijken | 9: +-1.3s/game, 8: +-0.3s/game
+    private int diepte = 9; //aantal lagen dat we diep kijken | 9: +-1.3s/game, 8: +-0.3s/game
     // ---------------------------------------------------------------------------------------
 
 	@Override
